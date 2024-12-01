@@ -38,7 +38,7 @@ const StepContent: React.FC<StepContentProps> = ({ steps }) => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
-          className="mb-8"
+          className="mb-8 md:lg:min-h-[400px] lg:min-h-[600px]"
         >
           {React.cloneElement(steps[currentStep].content as React.ReactElement, {
             stepData,

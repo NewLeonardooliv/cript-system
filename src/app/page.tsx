@@ -1,14 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import React, { useState } from 'react';
 import { StepGenerateKeys } from './_components/step-generate-keys';
-import { StepPrepare } from './_components/step-prepare';
 import { StepSignature } from './_components/step-signature';
 import { StepProtection } from './_components/step-protection';
 import { StepSend } from './_components/step-send';
 import { StepDecrypt } from './_components/step-decrypt';
 import Stepper from '@/components/stepper';
+import { StepPreparation } from './_components/step-prepare';
 
 const Home: React.FC = () => {
   const [stepData, setStepData] = useState({});
@@ -19,7 +18,7 @@ const Home: React.FC = () => {
     },
     {
       title: 'Preparação',
-      content: <StepPrepare stepData={stepData} setStepData={setStepData} />
+      content: <StepPreparation  />
     },
     {
       title: 'Assinatura',
@@ -40,7 +39,7 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <div className="mx-28 min-h-screen flex items-center justify-center">
+    <div className="mx-28 min-h-screen flex">
       <Stepper steps={steps} />
     </div>
   );

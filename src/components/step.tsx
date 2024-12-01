@@ -19,7 +19,6 @@ const Step: React.FC<StepProps> = ({ stepNumber, title }) => {
         isCompleted ? 'text-emerald-500' : isActive ? 'text-blue-600' : 'text-gray-400'
       }`}
       onClick={() => setCurrentStep(stepNumber)}
-      whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
       <motion.div
