@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { Player } from '@lottiefiles/react-lottie-player'
 import { Button } from '@/components/ui/button'
 import {
     Tooltip,
@@ -16,24 +17,30 @@ export function StepGenerateKeys() {
     const [aesKey, setAesKey] = useState<string | null>(null)
     const [isGeneratingRSA, setIsGeneratingRSA] = useState(false)
     const [isGeneratingAES, setIsGeneratingAES] = useState(false)
+    const rsaAnimationRef = useRef<Player>(null)
+    const aesAnimationRef = useRef<Player>(null)
 
     const generateRSAKeys = async () => {
         setIsGeneratingRSA(true)
+        rsaAnimationRef.current?.play()
         // Simulate key generation
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+        await new Promise((resolve) => setTimeout(resolve, 3000))
         setRsaKeys({
             publicKey: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A...',
             privateKey: 'MIIEvgIBADANBgkqhkiG9w0BAQEFAASCB...',
         })
         setIsGeneratingRSA(false)
+        rsaAnimationRef.current?.stop()
     }
 
     const generateAESKey = async () => {
         setIsGeneratingAES(true)
+        aesAnimationRef.current?.play()
         // Simulate key generation
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 2000))
         setAesKey('AES-256-GCM-Key-Example')
         setIsGeneratingAES(false)
+        aesAnimationRef.current?.stop()
     }
 
     return (
@@ -82,22 +89,20 @@ export function StepGenerateKeys() {
                                 </TooltipContent>
                             </Tooltip>
                         </div>
+                        <div className="flex items-center justify-center mb-4">
+                            <Player
+                                ref={rsaAnimationRef}
+                                src="https://lottie.host/640cc0b4-188a-4b90-90ec-e169f6ce4341/frYqKpBWsc.json"
+                                style={{ height: '150px', width: '150px', display: isGeneratingRSA ? 'block' : 'none' }}
+                            />
+                        </div>
                         <Button
                             className="w-full"
                             onClick={generateRSAKeys}
                             disabled={isGeneratingRSA}
                         >
-                            {isGeneratingRSA ? (
-                                <motion.div
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                                >
-                                    <Lock className="w-4 h-4 mr-2" />
-                                </motion.div>
-                            ) : (
-                                <Lock className="w-4 h-4 mr-2" />
-                            )}
-                            <span>Gerar Par de Chaves RSA</span>
+                            <Lock className="w-4 h-4 mr-2" />
+                            <span>{isGeneratingRSA ? 'Gerando...' : 'Gerar Par de Chaves RSA'}</span>
                         </Button>
                         {rsaKeys && (
                             <motion.div
@@ -152,22 +157,20 @@ export function StepGenerateKeys() {
                                 </TooltipContent>
                             </Tooltip>
                         </div>
+                        <div className="flex items-center justify-center mb-4">
+                            <Player
+                                ref={aesAnimationRef}
+                                src="https://lottie.host/640cc0b4-188a-4b90-90ec-e169f6ce4341/frYqKpBWsc.json"
+                                style={{ height: '150px', width: '150px', display: isGeneratingAES ? 'block' : 'none'  }}
+                            />
+                        </div>
                         <Button
                             className="w-full"
                             onClick={generateAESKey}
                             disabled={isGeneratingAES}
                         >
-                            {isGeneratingAES ? (
-                                <motion.div
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                                >
-                                    <Key className="w-4 h-4 mr-2" />
-                                </motion.div>
-                            ) : (
-                                <Key className="w-4 h-4 mr-2" />
-                            )}
-                            <span>Gerar Chave Simétrica AES</span>
+                            <Key className="w-4 h-4 mr-2" />
+                            <span>{isGeneratingAES ? 'Gerando...' : 'Gerar Chave Simétrica AES'}</span>
                         </Button>
                         {aesKey && (
                             <motion.div

@@ -31,7 +31,6 @@ const StepContent: React.FC<StepContentProps> = ({ steps }) => {
 
   return (
     <div className="bg-gray-50 rounded-lg p-6 shadow-inner">
-      <h2 className="text-2xl font-semibold mb-6 text-blue-600">{steps[currentStep].title}</h2>
       <AnimatePresence mode="wait">
         <motion.div
           key={currentStep}
