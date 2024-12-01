@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import Stepper from '@/components/stepper';
 import React, { useState } from 'react';
 import { StepGenerateKeys } from './_components/step-generate-keys';
 import { StepPrepare } from './_components/step-prepare';
@@ -9,13 +8,14 @@ import { StepSignature } from './_components/step-signature';
 import { StepProtection } from './_components/step-protection';
 import { StepSend } from './_components/step-send';
 import { StepDecrypt } from './_components/step-decrypt';
+import Stepper from '@/components/stepper';
 
 const Home: React.FC = () => {
   const [stepData, setStepData] = useState({});
   const steps = [
     {
       title: 'Geração de Chaves',
-      content: <StepGenerateKeys stepData={stepData} setStepData={setStepData} />
+      content: <StepGenerateKeys />
     },
     {
       title: 'Preparação',

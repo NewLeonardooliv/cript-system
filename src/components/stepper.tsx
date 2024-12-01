@@ -16,7 +16,7 @@ type StepperProps = {
 const Stepper: React.FC<StepperProps> = ({ steps }) => {
   return (
     <StepperProvider>
-      <div className="w-full mx-auto bg-white shadow-lg rounded-xl p-8">
+      <div className="w-full mx-auto bg-white rounded-xl p-8">
         <div className="flex justify-between mb-8">
           {steps.map((step, index) => (
             <Step key={index} stepNumber={index} title={step.title} />
