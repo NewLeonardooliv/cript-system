@@ -135,6 +135,60 @@ export const StepSignature: React.FC<{
                         )}
                     </CardContent>
                 </Card>
+
+                <Card>
+                    <CardContent className="p-6">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="space-y-6"
+                        >
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-semibold text-gray-900">Por que este passo é importante?</h3>
+                                
+                                <div className="space-y-6">
+                                    <div className="bg-blue-50 p-4 rounded-lg">
+                                        <h4 className="font-medium text-blue-800 flex items-center gap-2 mb-2">
+                                            <FileSignature className="w-5 h-5" />
+                                            Assinatura Digital
+                                        </h4>
+                                        <ul className="text-sm text-blue-700 space-y-2">
+                                            <li className="flex items-start gap-2">
+                                                <span className="font-semibold min-w-24">Autenticidade:</span>
+                                                <span>Comprova que você é o verdadeiro autor do documento</span>
+                                            </li>
+                                            <li className="flex items-start gap-2">
+                                                <span className="font-semibold min-w-24">Integridade:</span>
+                                                <span>Permite detectar qualquer alteração no documento após a assinatura</span>
+                                            </li>
+                                            <li className="flex items-start gap-2">
+                                                <span className="font-semibold min-w-24">Não-repúdio:</span>
+                                                <span>Impede que você negue posteriormente ter assinado o documento</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div className="bg-green-50 p-4 rounded-lg">
+                                        <h4 className="font-medium text-green-800 flex items-center gap-2 mb-2">
+                                            <Lock className="w-5 h-5" />
+                                            Cifragem
+                                        </h4>
+                                        <ul className="text-sm text-green-700 space-y-2">
+                                            <li className="flex items-start gap-2">
+                                                <span className="font-semibold min-w-24">Confidencialidade:</span>
+                                                <span>Garante que apenas o destinatário autorizado possa ler o conteúdo</span>
+                                            </li>
+                                            <li className="flex items-start gap-2">
+                                                <span className="font-semibold min-w-24">Privacidade:</span>
+                                                <span>Protege o documento durante toda a transmissão, mantendo-o ilegível para terceiros</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );
