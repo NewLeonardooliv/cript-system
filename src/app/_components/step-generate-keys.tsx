@@ -1,60 +1,67 @@
-'use client'
+'use client';
 
-import { useState, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { Player } from '@lottiefiles/react-lottie-player'
-import { Button } from '@/components/ui/button'
+import { useState, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { Player } from '@lottiefiles/react-lottie-player';
+import { Button } from '@/components/ui/button';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { Lock, Key, Shield, Eye, EyeOff } from 'lucide-react'
+} from '@/components/ui/tooltip';
+import { Lock, Key, Shield, Eye, EyeOff, CircleHelp } from 'lucide-react';
 
 export function StepGenerateKeys() {
-    const [rsaKeys, setRsaKeys] = useState<{ publicKey: string; privateKey: string } | null>(null)
-    const [aesKey, setAesKey] = useState<string | null>(null)
-    const [isGeneratingRSA, setIsGeneratingRSA] = useState(false)
-    const [isGeneratingAES, setIsGeneratingAES] = useState(false)
-    const [showPrivateKey, setShowPrivateKey] = useState(false)
-    const [showAesKey, setShowAesKey] = useState(false)
-    const rsaAnimationRef = useRef<Player>(null)
-    const aesAnimationRef = useRef<Player>(null)
+    const [rsaKeys, setRsaKeys] = useState<{
+        publicKey: string;
+        privateKey: string;
+    } | null>(null);
+    const [aesKey, setAesKey] = useState<string | null>(null);
+    const [isGeneratingRSA, setIsGeneratingRSA] = useState(false);
+    const [isGeneratingAES, setIsGeneratingAES] = useState(false);
+    const [showPrivateKey, setShowPrivateKey] = useState(false);
+    const [showAesKey, setShowAesKey] = useState(false);
+    const rsaAnimationRef = useRef<Player>(null);
+    const aesAnimationRef = useRef<Player>(null);
 
     const maskKey = (key: string) => {
-        const visibleStart = key.slice(0, 20)
-        const visibleEnd = key.slice(-20)
-        return `${visibleStart}...${visibleEnd}`
-    }
+        const visibleStart = key.slice(0, 20);
+        const visibleEnd = key.slice(-20);
+        return `${visibleStart}...${visibleEnd}`;
+    };
 
     const generateRSAKeys = async () => {
-        setIsGeneratingRSA(true)
-        rsaAnimationRef.current?.play()
+        setIsGeneratingRSA(true);
+        rsaAnimationRef.current?.play();
 
         try {
             const keyPair = await window.crypto.subtle.generateKey(
                 {
-                    name: "RSA-OAEP",
+                    name: 'RSA-OAEP',
                     modulusLength: 2048,
                     publicExponent: new Uint8Array([1, 0, 1]),
-                    hash: "SHA-256",
+                    hash: 'SHA-256',
                 },
                 true,
-                ["encrypt", "decrypt"]
+                ['encrypt', 'decrypt']
             );
 
             const publicKeyBuffer = await window.crypto.subtle.exportKey(
-                "spki",
+                'spki',
                 keyPair.publicKey
             );
-            const publicKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(publicKeyBuffer)));
+            const publicKeyBase64 = btoa(
+                String.fromCharCode(...new Uint8Array(publicKeyBuffer))
+            );
 
             const privateKeyBuffer = await window.crypto.subtle.exportKey(
-                "pkcs8",
+                'pkcs8',
                 keyPair.privateKey
             );
-            const privateKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(privateKeyBuffer)));
+            const privateKeyBase64 = btoa(
+                String.fromCharCode(...new Uint8Array(privateKeyBuffer))
+            );
 
             setRsaKeys({
                 publicKey: publicKeyBase64,
@@ -64,38 +71,40 @@ export function StepGenerateKeys() {
             console.error('Erro ao gerar chaves RSA:', error);
         }
 
-        setIsGeneratingRSA(false)
-        rsaAnimationRef.current?.stop()
-    }
+        setIsGeneratingRSA(false);
+        rsaAnimationRef.current?.stop();
+    };
 
     const generateAESKey = async () => {
-        setIsGeneratingAES(true)
-        aesAnimationRef.current?.play()
+        setIsGeneratingAES(true);
+        aesAnimationRef.current?.play();
 
         try {
             const key = await window.crypto.subtle.generateKey(
                 {
-                    name: "AES-GCM",
+                    name: 'AES-GCM',
                     length: 256,
                 },
                 true,
-                ["encrypt", "decrypt"]
+                ['encrypt', 'decrypt']
             );
 
-            const keyBuffer = await window.crypto.subtle.exportKey("raw", key);
-            const keyBase64 = btoa(String.fromCharCode(...new Uint8Array(keyBuffer)));
+            const keyBuffer = await window.crypto.subtle.exportKey('raw', key);
+            const keyBase64 = btoa(
+                String.fromCharCode(...new Uint8Array(keyBuffer))
+            );
 
             setAesKey(keyBase64);
         } catch (error) {
             console.error('Erro ao gerar chave AES:', error);
         }
 
-        setIsGeneratingAES(false)
-        aesAnimationRef.current?.stop()
-    }
+        setIsGeneratingAES(false);
+        aesAnimationRef.current?.stop();
+    };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-10 w-full">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -107,13 +116,13 @@ export function StepGenerateKeys() {
                 </p>
             </motion.div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 xl:flex xl:space-x-6 xl:space-y-0 w-full">
                 <TooltipProvider>
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="p-6 border rounded-lg bg-gray-50"
+                        className="p-6 border rounded-lg bg-gray-50 w-full"
                     >
                         <div className="flex justify-between items-center mb-4">
                             <div className="flex items-center gap-2">
@@ -123,19 +132,15 @@ export function StepGenerateKeys() {
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <div className="cursor-help">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="text-xs"
-                                        >
-                                            Saiba mais
-                                        </Button>
+                                        <CircleHelp />
                                     </div>
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-sm">
                                     <p>
-                                        RSA é um algoritmo de criptografia assimétrica que usa um par de chaves:
-                                        pública para criptografar e privada para descriptografar.
+                                        RSA é um algoritmo de criptografia
+                                        assimétrica que usa um par de chaves:
+                                        pública para criptografar e privada para
+                                        descriptografar.
                                     </p>
                                 </TooltipContent>
                             </Tooltip>
@@ -144,7 +149,11 @@ export function StepGenerateKeys() {
                             <Player
                                 ref={rsaAnimationRef}
                                 src="https://lottie.host/640cc0b4-188a-4b90-90ec-e169f6ce4341/frYqKpBWsc.json"
-                                style={{ height: '150px', width: '150px', display: isGeneratingRSA ? 'block' : 'none' }}
+                                style={{
+                                    height: '150px',
+                                    width: '150px',
+                                    display: isGeneratingRSA ? 'block' : 'none',
+                                }}
                             />
                         </div>
                         <Button
@@ -153,7 +162,11 @@ export function StepGenerateKeys() {
                             disabled={isGeneratingRSA}
                         >
                             <Lock className="w-4 h-4 mr-2" />
-                            <span>{isGeneratingRSA ? 'Gerando...' : 'Gerar Par de Chaves RSA'}</span>
+                            <span>
+                                {isGeneratingRSA
+                                    ? 'Gerando...'
+                                    : 'Gerar Par de Chaves RSA'}
+                            </span>
                         </Button>
                         {rsaKeys && (
                             <motion.div
@@ -171,7 +184,11 @@ export function StepGenerateKeys() {
                                                         variant="ghost"
                                                         size="sm"
                                                         className="h-6 px-2"
-                                                        onClick={() => navigator.clipboard.writeText(rsaKeys.publicKey)}
+                                                        onClick={() =>
+                                                            navigator.clipboard.writeText(
+                                                                rsaKeys.publicKey
+                                                            )
+                                                        }
                                                     >
                                                         Copiar
                                                     </Button>
@@ -198,7 +215,11 @@ export function StepGenerateKeys() {
                                                             variant="ghost"
                                                             size="sm"
                                                             className="h-6 px-2"
-                                                            onClick={() => setShowPrivateKey(!showPrivateKey)}
+                                                            onClick={() =>
+                                                                setShowPrivateKey(
+                                                                    !showPrivateKey
+                                                                )
+                                                            }
                                                         >
                                                             {showPrivateKey ? (
                                                                 <EyeOff className="h-4 w-4" />
@@ -208,7 +229,12 @@ export function StepGenerateKeys() {
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent>
-                                                        <p>{showPrivateKey ? 'Ocultar' : 'Mostrar'} chave privada</p>
+                                                        <p>
+                                                            {showPrivateKey
+                                                                ? 'Ocultar'
+                                                                : 'Mostrar'}{' '}
+                                                            chave privada
+                                                        </p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
@@ -219,24 +245,34 @@ export function StepGenerateKeys() {
                                                             variant="ghost"
                                                             size="sm"
                                                             className="h-6 px-2"
-                                                            onClick={() => navigator.clipboard.writeText(rsaKeys.privateKey)}
+                                                            onClick={() =>
+                                                                navigator.clipboard.writeText(
+                                                                    rsaKeys.privateKey
+                                                                )
+                                                            }
                                                         >
                                                             Copiar
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent>
-                                                        <p>Copiar chave privada</p>
+                                                        <p>
+                                                            Copiar chave privada
+                                                        </p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
                                         </div>
                                     </div>
                                     <div className="text-xs text-gray-600 break-all font-mono">
-                                        {showPrivateKey ? rsaKeys.privateKey : '••••••••••••••••••••••••••'}
+                                        {showPrivateKey
+                                            ? rsaKeys.privateKey
+                                            : '••••••••••••••••••••••••••'}
                                     </div>
                                     {!showPrivateKey && (
                                         <p className="text-xs text-amber-600 mt-2">
-                                            ⚠️ A chave privada está oculta por segurança. Clique no ícone do olho para visualizar.
+                                            ⚠️ A chave privada está oculta por
+                                            segurança. Clique no ícone do olho
+                                            para visualizar.
                                         </p>
                                     )}
                                 </div>
@@ -248,7 +284,7 @@ export function StepGenerateKeys() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="p-6 border rounded-lg bg-gray-50"
+                        className="p-6 border rounded-lg bg-gray-50 w-full"
                     >
                         <div className="flex justify-between items-center mb-4">
                             <div className="flex items-center gap-2">
@@ -258,20 +294,16 @@ export function StepGenerateKeys() {
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <div className="cursor-help">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="text-xs"
-                                        >
-                                            Saiba mais
-                                        </Button>
+                                        <CircleHelp />
                                     </div>
                                 </TooltipTrigger>
                                 <TooltipContent className="max-w-sm">
                                     <p>
-                                        AES-GCM é um algoritmo de criptografia simétrica que usa a mesma chave
-                                        para criptografar e descriptografar dados. Esta implementação usa uma
-                                        chave de 256 bits para máxima segurança.
+                                        AES-GCM é um algoritmo de criptografia
+                                        simétrica que usa a mesma chave para
+                                        criptografar e descriptografar dados.
+                                        Esta implementação usa uma chave de 256
+                                        bits para máxima segurança.
                                     </p>
                                 </TooltipContent>
                             </Tooltip>
@@ -281,7 +313,11 @@ export function StepGenerateKeys() {
                             <Player
                                 ref={aesAnimationRef}
                                 src="https://lottie.host/640cc0b4-188a-4b90-90ec-e169f6ce4341/frYqKpBWsc.json"
-                                style={{ height: '150px', width: '150px', display: isGeneratingAES ? 'block' : 'none' }}
+                                style={{
+                                    height: '150px',
+                                    width: '150px',
+                                    display: isGeneratingAES ? 'block' : 'none',
+                                }}
                             />
                         </div>
 
@@ -291,7 +327,11 @@ export function StepGenerateKeys() {
                             disabled={isGeneratingAES}
                         >
                             <Key className="w-4 h-4 mr-2" />
-                            <span>{isGeneratingAES ? 'Gerando...' : 'Gerar Chave Simétrica AES'}</span>
+                            <span>
+                                {isGeneratingAES
+                                    ? 'Gerando...'
+                                    : 'Gerar Chave Simétrica AES'}
+                            </span>
                         </Button>
 
                         {aesKey && (
@@ -311,7 +351,11 @@ export function StepGenerateKeys() {
                                                             variant="ghost"
                                                             size="sm"
                                                             className="h-6 px-2"
-                                                            onClick={() => setShowAesKey(!showAesKey)}
+                                                            onClick={() =>
+                                                                setShowAesKey(
+                                                                    !showAesKey
+                                                                )
+                                                            }
                                                         >
                                                             {showAesKey ? (
                                                                 <EyeOff className="h-4 w-4" />
@@ -321,7 +365,12 @@ export function StepGenerateKeys() {
                                                         </Button>
                                                     </TooltipTrigger>
                                                     <TooltipContent>
-                                                        <p>{showAesKey ? 'Ocultar' : 'Mostrar'} chave AES</p>
+                                                        <p>
+                                                            {showAesKey
+                                                                ? 'Ocultar'
+                                                                : 'Mostrar'}{' '}
+                                                            chave AES
+                                                        </p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
@@ -332,7 +381,11 @@ export function StepGenerateKeys() {
                                                             variant="ghost"
                                                             size="sm"
                                                             className="h-6 px-2"
-                                                            onClick={() => navigator.clipboard.writeText(aesKey)}
+                                                            onClick={() =>
+                                                                navigator.clipboard.writeText(
+                                                                    aesKey
+                                                                )
+                                                            }
                                                         >
                                                             Copiar
                                                         </Button>
@@ -349,12 +402,18 @@ export function StepGenerateKeys() {
                                     </div>
                                     {!showAesKey && (
                                         <p className="text-xs text-amber-600 mt-2">
-                                            ⚠️ A chave está parcialmente oculta por segurança. Clique no ícone do olho para visualizar completamente.
+                                            ⚠️ A chave está parcialmente oculta
+                                            por segurança. Clique no ícone do
+                                            olho para visualizar completamente.
                                         </p>
                                     )}
                                 </div>
                                 <div className="mt-2 text-xs text-gray-500">
-                                    <p>Esta chave AES-256 pode ser usada para criptografar grandes volumes de dados de forma eficiente.</p>
+                                    <p>
+                                        Esta chave AES-256 pode ser usada para
+                                        criptografar grandes volumes de dados de
+                                        forma eficiente.
+                                    </p>
                                 </div>
                             </motion.div>
                         )}
@@ -362,6 +421,5 @@ export function StepGenerateKeys() {
                 </TooltipProvider>
             </div>
         </div>
-    )
+    );
 }
-

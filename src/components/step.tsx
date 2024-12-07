@@ -15,7 +15,7 @@ const Step: React.FC<StepProps> = ({ stepNumber, title }) => {
 
     return (
         <motion.div
-            className={`flex flex-col items-center cursor-pointer ${
+            className={`flex flex-1 flex-col items-center cursor-pointer ${
                 isCompleted
                     ? 'text-emerald-500'
                     : isActive
