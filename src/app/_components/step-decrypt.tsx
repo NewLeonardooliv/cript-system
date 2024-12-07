@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export const StepDecrypt: React.FC<{ stepData: any; setStepData: (data: any) => void }> = ({ stepData, setStepData }) => {
+export const StepDecrypt: React.FC<{
+    stepData: any;
+    setStepData: (data: any) => void;
+}> = ({ stepData, setStepData }) => {
     return (
         <div>
             <input
