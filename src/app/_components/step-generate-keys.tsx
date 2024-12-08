@@ -45,7 +45,7 @@ export function StepGenerateKeys() {
             }
 
             const { publicKey, privateKey } = await response.json();
-            
+
             setRsaKeys({
                 publicKey,
                 privateKey,
@@ -81,6 +81,79 @@ export function StepGenerateKeys() {
         aesAnimationRef.current?.stop();
     };
 
+    const resetAll = () => {
+        setRsaKeys(null);
+        setAesKey(null);
+        setIsGeneratingRSA(false);
+        setIsGeneratingAES(false);
+        setShowPrivateKey(false);
+        setShowAesKey(false);
+        rsaAnimationRef.current?.stop();
+        aesAnimationRef.current?.stop();
+    };
+
+    const resetRSA = () => {
+        setRsaKeys(null);
+        setIsGeneratingRSA(false);
+        setShowPrivateKey(false);
+        rsaAnimationRef.current?.stop();
+    };
+
+    const resetAES = () => {
+        setAesKey(null);
+        setIsGeneratingAES(false);
+        setShowAesKey(false);
+        aesAnimationRef.current?.stop();
+    };
+
+    const downloadRSAKeys = async () => {
+        try {
+            const response = await fetch('/api/generate-keys/rsa/download', {
+                method: 'GET',
+            });
+
+            if (!response.ok) {
+                throw new Error('Falha ao baixar chaves RSA');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'rsa_keys.zip';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Erro ao baixar chaves RSA:', error);
+        }
+    };
+
+    const downloadAESKey = async () => {
+        try {
+            const response = await fetch('/api/generate-keys/aes/download', {
+                method: 'GET',
+            });
+
+            if (!response.ok) {
+                throw new Error('Falha ao baixar chave AES');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'aes_key.txt';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Erro ao baixar chave AES:', error);
+        }
+    };
+
     return (
         <div className="space-y-10 w-full">
             <motion.div
@@ -94,14 +167,29 @@ export function StepGenerateKeys() {
                 </p>
             </motion.div>
 
+            <div className="flex justify-end space-x-2">
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={resetAll}
+                                className="text-red-600 border-red-200 hover:bg-red-50"
+                            >
+                                Reiniciar Tudo
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Limpar todas as chaves geradas</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
+
             <div className="space-y-6 xl:flex xl:space-x-6 xl:space-y-0 w-full">
                 <TooltipProvider>
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="p-6 border rounded-lg bg-gray-50 w-full"
-                    >
+                    <motion.div className="p-6 border rounded-lg bg-gray-50 w-full">
                         <div className="flex justify-between items-center mb-4">
                             <div className="flex items-center gap-2">
                                 <Shield className="w-5 h-5 text-blue-600" />
@@ -146,6 +234,16 @@ export function StepGenerateKeys() {
                                     : 'Gerar Par de Chaves RSA'}
                             </span>
                         </Button>
+                        {rsaKeys && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={resetRSA}
+                                className="mt-2 text-red-600 hover:bg-red-50 w-full"
+                            >
+                                Reiniciar RSA
+                            </Button>
+                        )}
                         {rsaKeys && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
@@ -254,16 +352,39 @@ export function StepGenerateKeys() {
                                         </p>
                                     )}
                                 </div>
+                                <div className="flex justify-end gap-2 mt-4">
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={downloadRSAKeys}
+                                                    className="h-8 px-3"
+                                                >
+                                                    Baixar Chaves
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Baixar chaves RSA em arquivo ZIP</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </div>
                             </motion.div>
                         )}
+                        <div className="mb-4 p-4 bg-white rounded-lg border border-blue-100">
+                            <h4 className="text-sm font-medium text-blue-700 mb-2">Como funciona o RSA?</h4>
+                            <ul className="text-xs text-gray-600 space-y-1 list-disc list-inside">
+                                <li>Usa duas chaves diferentes: uma pública e uma privada</li>
+                                <li>A chave pública pode ser compartilhada livremente</li>
+                                <li>Apenas a chave privada pode descriptografar as mensagens</li>
+                                <li>Ideal para troca segura de chaves e assinaturas digitais</li>
+                            </ul>
+                        </div>
                     </motion.div>
 
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 }}
-                        className="p-6 border rounded-lg bg-gray-50 w-full"
-                    >
+                    <motion.div className="p-6 border rounded-lg bg-gray-50 w-full">
                         <div className="flex justify-between items-center mb-4">
                             <div className="flex items-center gap-2">
                                 <Key className="w-5 h-5 text-green-600" />
@@ -311,6 +432,17 @@ export function StepGenerateKeys() {
                                     : 'Gerar Chave Simétrica AES'}
                             </span>
                         </Button>
+
+                        {aesKey && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={resetAES}
+                                className="mt-2 text-red-600 hover:bg-red-50 w-full"
+                            >
+                                Reiniciar AES
+                            </Button>
+                        )}
 
                         {aesKey && (
                             <motion.div
@@ -393,10 +525,68 @@ export function StepGenerateKeys() {
                                         forma eficiente.
                                     </p>
                                 </div>
+                                <div className="flex justify-end gap-2 mt-4">
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={downloadAESKey}
+                                                    className="h-8 px-3"
+                                                >
+                                                    Baixar Chave
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Baixar chave AES em arquivo texto</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </div>
                             </motion.div>
                         )}
+                        <div className="mb-4 p-4 bg-white rounded-lg border border-green-100">
+                            <h4 className="text-sm font-medium text-green-700 mb-2">Como funciona o AES?</h4>
+                            <ul className="text-xs text-gray-600 space-y-1 list-disc list-inside">
+                                <li>Usa uma única chave para criptografar e descriptografar</li>
+                                <li>Mais rápido que RSA para grandes volumes de dados</li>
+                                <li>A mesma chave deve ser compartilhada de forma segura</li>
+                                <li>Amplamente usado para criptografia de dados em massa</li>
+                            </ul>
+                        </div>
                     </motion.div>
                 </TooltipProvider>
+            </div>
+
+            <div className="mt-8 p-6 bg-gray-50 rounded-lg border">
+                <h3 className="text-lg font-semibold mb-4">Comparação: RSA vs AES</h3>
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-white p-4 rounded-lg border">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Shield className="w-5 h-5 text-blue-600" />
+                            <h4 className="font-medium">RSA (Assimétrica)</h4>
+                        </div>
+                        <div className="space-y-2 text-sm text-gray-600">
+                            <p>✓ Mais seguro para troca de chaves</p>
+                            <p>✓ Permite assinatura digital</p>
+                            <p>✗ Mais lento para grandes volumes</p>
+                            <p>✗ Chaves maiores</p>
+                        </div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg border">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Key className="w-5 h-5 text-green-600" />
+                            <h4 className="font-medium">AES (Simétrica)</h4>
+                        </div>
+                        <div className="space-y-2 text-sm text-gray-600">
+                            <p>✓ Mais rápido</p>
+                            <p>✓ Ideal para grandes volumes</p>
+                            <p>✗ Precisa compartilhar a chave</p>
+                            <p>✗ Sem suporte a assinatura digital</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
