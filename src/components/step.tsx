@@ -15,7 +15,7 @@ const Step: React.FC<StepProps> = ({ stepNumber, title }) => {
 
     return (
         <motion.div
-            className={`flex flex-1 flex-col items-center cursor-pointer ${
+            className={`flex flex-1 lg:flex-col items-center cursor-pointer gap-2 lg:gap-0 ${
                 isCompleted
                     ? 'text-emerald-500'
                     : isActive
@@ -26,7 +26,7 @@ const Step: React.FC<StepProps> = ({ stepNumber, title }) => {
             whileTap={{ scale: 0.95 }}
         >
             <motion.div
-                className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${
+                className={`w-12 h-12 rounded-full flex items-center justify-center lg:mb-2 ${
                     isCompleted
                         ? 'bg-emerald-100 text-emerald-500'
                         : isActive
@@ -56,7 +56,7 @@ const Step: React.FC<StepProps> = ({ stepNumber, title }) => {
                     stepNumber + 1
                 )}
             </motion.div>
-            <span className="text-sm font-medium text-center">{title}</span>
+            <span className="text-sm font-medium lg:text-center">{title}</span>
         </motion.div>
     );
 };

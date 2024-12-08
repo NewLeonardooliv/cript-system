@@ -45,7 +45,7 @@ const Home: React.FC = () => {
     ];
 
     return (
-        <div className="mx-28 min-h-fit flex">
+        <div className="mx-28 w-full min-h-fit flex">
             <Stepper steps={steps} />
         </div>
     );
