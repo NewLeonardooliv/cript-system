@@ -36,36 +36,19 @@ export function StepGenerateKeys() {
         rsaAnimationRef.current?.play();
 
         try {
-            const keyPair = await window.crypto.subtle.generateKey(
-                {
-                    name: 'RSA-OAEP',
-                    modulusLength: 2048,
-                    publicExponent: new Uint8Array([1, 0, 1]),
-                    hash: 'SHA-256',
-                },
-                true,
-                ['encrypt', 'decrypt']
-            );
+            const response = await fetch('/api/generate-keys/rsa', {
+                method: 'GET',
+            });
 
-            const publicKeyBuffer = await window.crypto.subtle.exportKey(
-                'spki',
-                keyPair.publicKey
-            );
-            const publicKeyBase64 = btoa(
-                String.fromCharCode(...new Uint8Array(publicKeyBuffer))
-            );
+            if (!response.ok) {
+                throw new Error('Falha ao gerar chaves RSA');
+            }
 
-            const privateKeyBuffer = await window.crypto.subtle.exportKey(
-                'pkcs8',
-                keyPair.privateKey
-            );
-            const privateKeyBase64 = btoa(
-                String.fromCharCode(...new Uint8Array(privateKeyBuffer))
-            );
-
+            const { publicKey, privateKey } = await response.json();
+            
             setRsaKeys({
-                publicKey: publicKeyBase64,
-                privateKey: privateKeyBase64,
+                publicKey,
+                privateKey,
             });
         } catch (error) {
             console.error('Erro ao gerar chaves RSA:', error);
@@ -80,21 +63,16 @@ export function StepGenerateKeys() {
         aesAnimationRef.current?.play();
 
         try {
-            const key = await window.crypto.subtle.generateKey(
-                {
-                    name: 'AES-GCM',
-                    length: 256,
-                },
-                true,
-                ['encrypt', 'decrypt']
-            );
+            const response = await fetch('/api/generate-keys/aes', {
+                method: 'GET',
+            });
 
-            const keyBuffer = await window.crypto.subtle.exportKey('raw', key);
-            const keyBase64 = btoa(
-                String.fromCharCode(...new Uint8Array(keyBuffer))
-            );
+            if (!response.ok) {
+                throw new Error('Falha ao gerar chave AES');
+            }
 
-            setAesKey(keyBase64);
+            const { key } = await response.json();
+            setAesKey(key);
         } catch (error) {
             console.error('Erro ao gerar chave AES:', error);
         }
