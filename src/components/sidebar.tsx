@@ -1,14 +1,11 @@
-import {
-    FileKey,
-    KeyRound,
-    LockKeyhole,
-    LockKeyholeOpen,
-    Send,
-    ShieldCheck,
-} from 'lucide-react';
+'use client';
 
-import { Separator } from '@/components/ui/separator';
-
+import { StepDecrypt } from '@/app/_components/step-decrypt';
+import { StepGenerateKeys } from '@/app/_components/step-generate-keys';
+import { StepPreparation } from '@/app/_components/step-prepare';
+import { StepProtection } from '@/app/_components/step-protection';
+import { StepSend } from '@/app/_components/step-send';
+import { StepSignature } from '@/app/_components/step-signature';
 import {
     Sidebar,
     SidebarContent,
@@ -16,39 +13,45 @@ import {
     SidebarGroupContent,
     SidebarGroupLabel,
     SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
 } from '@/components/ui/sidebar';
-
-// Menu items.
-const items = [
-    {
-        title: 'Geração de Chaves',
-        icon: KeyRound,
-    },
-    {
-        title: 'Preparação',
-        icon: FileKey,
-    },
-    {
-        title: 'Assinatura',
-        icon: LockKeyhole,
-    },
-    {
-        title: 'Proteção',
-        icon: ShieldCheck,
-    },
-    {
-        title: 'Envio',
-        icon: Send,
-    },
-    {
-        title: 'Descriptografia',
-        icon: LockKeyholeOpen,
-    },
-];
+import { useState } from 'react';
+import Stepper from './stepper';
 
 export function AppSidebar() {
+    const [stepData, setStepData] = useState({});
+    const steps = [
+        {
+            title: 'Geração de Chaves',
+            content: <StepGenerateKeys />,
+        },
+        {
+            title: 'Preparação',
+            content: <StepPreparation />,
+        },
+        {
+            title: 'Assinatura',
+            content: (
+                <StepSignature stepData={stepData} setStepData={setStepData} />
+            ),
+        },
+        {
+            title: 'Proteção',
+            content: (
+                <StepProtection stepData={stepData} setStepData={setStepData} />
+            ),
+        },
+        {
+            title: 'Envio',
+            content: <StepSend stepData={stepData} setStepData={setStepData} />,
+        },
+        {
+            title: 'Descriptografia',
+            content: (
+                <StepDecrypt stepData={stepData} setStepData={setStepData} />
+            ),
+        },
+    ];
+
     return (
         <Sidebar>
             <SidebarContent>
@@ -56,19 +59,7 @@ export function AppSidebar() {
                     <SidebarGroupLabel>Etapas</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <div>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </div>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                            {/* {!items.at(-1) && (
-                                <Separator orientation="vertical"/>
-                            )} */}
+                            <Stepper steps={steps} hiddenContent={true} />
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
