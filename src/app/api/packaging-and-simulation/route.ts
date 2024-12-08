@@ -3,7 +3,7 @@ import AdmZip from 'adm-zip';
 
 export async function POST(req: NextRequest) {
     try {
-        const {encryptedFile, signature, encryptedAesKey} = await req.json();
+        const { encryptedFile, signature, encryptedAesKey } = await req.json();
 
         if (
             !encryptedFile ||
@@ -22,7 +22,10 @@ export async function POST(req: NextRequest) {
         const zip = new AdmZip();
         zip.addFile('encrypted_file.bin', Buffer.from(encryptedFile, 'base64'));
         zip.addFile('signature.sig', Buffer.from(signature, 'base64'));
-        zip.addFile('encrypted_key.key', Buffer.from(encryptedAesKey, 'base64'));
+        zip.addFile(
+            'encrypted_key.key',
+            Buffer.from(encryptedAesKey, 'base64')
+        );
 
         const zipBuffer = zip.toBuffer();
 
