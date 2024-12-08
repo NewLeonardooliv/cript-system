@@ -1,4 +1,13 @@
-import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
+import {
+    FileKey,
+    KeyRound,
+    LockKeyhole,
+    LockKeyholeOpen,
+    Send,
+    ShieldCheck,
+} from 'lucide-react';
+
+import { Separator } from '@/components/ui/separator';
 
 import {
     Sidebar,
@@ -15,27 +24,27 @@ import {
 const items = [
     {
         title: 'Geração de Chaves',
-        icon: Home,
+        icon: KeyRound,
     },
     {
         title: 'Preparação',
-        icon: Inbox,
+        icon: FileKey,
     },
     {
         title: 'Assinatura',
-        icon: Calendar,
+        icon: LockKeyhole,
     },
     {
         title: 'Proteção',
-        icon: Search,
+        icon: ShieldCheck,
     },
     {
         title: 'Envio',
-        icon: Settings,
+        icon: Send,
     },
     {
         title: 'Descriptografia',
-        icon: Settings,
+        icon: LockKeyholeOpen,
     },
 ];
 
@@ -44,7 +53,7 @@ export function AppSidebar() {
         <Sidebar>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Application</SidebarGroupLabel>
+                    <SidebarGroupLabel>Etapas</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {items.map((item) => (
@@ -57,6 +66,9 @@ export function AppSidebar() {
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
+                            {/* {!items.at(-1) && (
+                                <Separator orientation="vertical"/>
+                            )} */}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
