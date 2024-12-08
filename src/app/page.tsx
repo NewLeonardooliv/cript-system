@@ -10,7 +10,10 @@ import Stepper from '@/components/stepper';
 import { StepPreparation } from './_components/step-prepare';
 
 const Home: React.FC = () => {
-    const [stepData, setStepData] = useState({});
+    const [stepData, setStepData] = useState<{
+        file: File | null;
+        publicKey: File | null;
+    }>({ file: null, publicKey: null });
     const steps = [
         {
             title: 'Geração de Chaves',
@@ -18,7 +21,7 @@ const Home: React.FC = () => {
         },
         {
             title: 'Preparação',
-            content: <StepPreparation />,
+            content: <StepPreparation setStepData={setStepData} />,
         },
         {
             title: 'Assinatura',

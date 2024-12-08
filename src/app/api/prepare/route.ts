@@ -13,12 +13,17 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Lê o conteúdo da chave pública
         const publicKeyContent = await publicKeyFile.text();
-        if (!publicKeyContent.includes('-----BEGIN PUBLIC KEY-----')) {
+        try {
+            crypto.createPublicKey(publicKeyContent);
+        } catch (err) {
             return NextResponse.json(
-                { error: 'Formato da chave pública inválido.' },
-                { status: 400 }
+                {
+                    error: 'Formato da chave pública inválido',
+                },
+                {
+                    status: 400,
+                }
             );
         }
 
@@ -34,7 +39,10 @@ export async function POST(req: NextRequest) {
         const fileContent = await file.arrayBuffer();
         const fileBuffer = Buffer.from(fileContent);
 
-        const hash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+        const hash = crypto
+            .createHash('sha256')
+            .update(fileBuffer)
+            .digest('hex');
 
         const isTextFile = file.type && file.type.startsWith('text/');
         let fileTextContent = null;
