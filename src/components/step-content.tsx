@@ -12,9 +12,10 @@ type StepType = {
 
 type StepContentProps = {
     steps: StepType[];
+    hidden?: boolean;
 };
 
-const StepContent: React.FC<StepContentProps> = ({ steps }) => {
+const StepContent: React.FC<StepContentProps> = ({ steps, hidden = false }) => {
     const { currentStep, stepData, setCurrentStep, setStepData } =
         useStepperContext();
 
@@ -31,7 +32,11 @@ const StepContent: React.FC<StepContentProps> = ({ steps }) => {
     };
 
     return (
-        <div className="bg-gray-50 rounded-lg p-6 shadow-inner w-full">
+        <div
+            className={`md:bg-gray-50 rounded-lg md:p-6 md:shadow-inner w-full ${
+                hidden ? 'hidden' : ''
+            }`}
+        >
             <AnimatePresence mode="wait">
                 <motion.div
                     key={currentStep}
