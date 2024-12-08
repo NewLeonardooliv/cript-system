@@ -1,70 +1,75 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent } from '@/components/ui/card'
-import { FileText, Info } from 'lucide-react'
-import { Player } from '@lottiefiles/react-lottie-player'
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { FileText, Info } from 'lucide-react';
+import { Player } from '@lottiefiles/react-lottie-player';
 
 interface FileInfo {
-    name: string
-    size: number
-    hash: string
-    content?: string
+    name: string;
+    size: number;
+    hash: string;
+    content?: string;
 }
 
 export function StepPreparation() {
-    const [publicKey, setPublicKey] = useState<File | null>(null)
-    const [, setSelectedFile] = useState<File | null>(null)
-    const [fileInfo, setFileInfo] = useState<FileInfo | null>(null)
-    const [isProcessing, setIsProcessing] = useState(false)
+    const [publicKey, setPublicKey] = useState<File | null>(null);
+    const [, setSelectedFile] = useState<File | null>(null);
+    const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const calculateSHA256 = async (file: File): Promise<string> => {
-        const buffer = await file.arrayBuffer()
-        const hashBuffer = await crypto.subtle.digest('SHA-256', buffer)
-        const hashArray = Array.from(new Uint8Array(hashBuffer))
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
-        return hashHex
-    }
+        const buffer = await file.arrayBuffer();
+        const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('');
+        return hashHex;
+    };
 
-    const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>, type: 'key' | 'document') => {
-        const file = event.target.files?.[0]
-        if (!file) return
+    const handleFileSelect = async (
+        event: React.ChangeEvent<HTMLInputElement>,
+        type: 'key' | 'document'
+    ) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
 
-        setIsProcessing(true)
+        setIsProcessing(true);
 
         try {
             if (type === 'key') {
-                setPublicKey(file)
+                setPublicKey(file);
             } else {
-                setSelectedFile(file)
-                const hash = await calculateSHA256(file)
+                setSelectedFile(file);
+                const hash = await calculateSHA256(file);
 
-                let content: string | undefined
+                let content: string | undefined;
                 if (file.type === 'text/plain') {
-                    content = await file.text()
+                    content = await file.text();
                 }
 
                 setFileInfo({
                     name: file.name,
                     size: file.size,
                     hash,
-                    content
-                })
+                    content,
+                });
             }
         } catch (error) {
-            console.error('Error processing file:', error)
+            console.error('Error processing file:', error);
         } finally {
-            setIsProcessing(false)
+            setIsProcessing(false);
         }
-    }
+    };
 
     const formatFileSize = (bytes: number): string => {
-        if (bytes < 1024) return bytes + ' B'
-        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB'
-        return (bytes / (1024 * 1024)).toFixed(2) + ' MB'
-    }
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    };
 
     return (
         <div className="space-y-8">
@@ -73,7 +78,9 @@ export function StepPreparation() {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center"
             >
-                <h2 className="text-2xl font-bold mb-4">Preparação do Ambiente</h2>
+                <h2 className="text-2xl font-bold mb-4">
+                    Preparação do Ambiente
+                </h2>
                 <p className="text-gray-600 mb-8">
                     Importe a chave pública e selecione o arquivo para envio
                 </p>
@@ -96,7 +103,9 @@ export function StepPreparation() {
                                         <Input
                                             type="file"
                                             accept=".pem,.key,.pub"
-                                            onChange={(e) => handleFileSelect(e, 'key')}
+                                            onChange={(e) =>
+                                                handleFileSelect(e, 'key')
+                                            }
                                         />
                                         {publicKey && (
                                             <span className="text-sm text-green-600">
@@ -113,7 +122,9 @@ export function StepPreparation() {
                                     <div className="mt-1 flex items-center gap-4">
                                         <Input
                                             type="file"
-                                            onChange={(e) => handleFileSelect(e, 'document')}
+                                            onChange={(e) =>
+                                                handleFileSelect(e, 'document')
+                                            }
                                         />
                                     </div>
                                 </label>
@@ -124,7 +135,10 @@ export function StepPreparation() {
                                             autoplay
                                             loop
                                             src="https://assets9.lottiefiles.com/packages/lf20_b88nz42q.json"
-                                            style={{ height: '120px', width: '120px' }}
+                                            style={{
+                                                height: '120px',
+                                                width: '120px',
+                                            }}
                                         />
                                     </div>
                                 )}
@@ -140,10 +154,23 @@ export function StepPreparation() {
                                             Informações do Arquivo:
                                         </h3>
                                         <div className="space-y-1 text-sm">
-                                            <p><span className="font-medium">Nome:</span> {fileInfo.name}</p>
-                                            <p><span className="font-medium">Tamanho:</span> {formatFileSize(fileInfo.size)}</p>
+                                            <p>
+                                                <span className="font-medium">
+                                                    Nome:
+                                                </span>{' '}
+                                                {fileInfo.name}
+                                            </p>
+                                            <p>
+                                                <span className="font-medium">
+                                                    Tamanho:
+                                                </span>{' '}
+                                                {formatFileSize(fileInfo.size)}
+                                            </p>
                                             <p className="break-all">
-                                                <span className="font-medium">Hash SHA-256:</span> {fileInfo.hash}
+                                                <span className="font-medium">
+                                                    Hash SHA-256:
+                                                </span>{' '}
+                                                {fileInfo.hash}
                                             </p>
                                         </div>
 
@@ -166,6 +193,5 @@ export function StepPreparation() {
                 </motion.div>
             </div>
         </div>
-    )
+    );
 }
-

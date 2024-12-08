@@ -10,7 +10,9 @@ type StepperContextType = {
 
 const StepperContext = createContext<StepperContextType | undefined>(undefined);
 
-export const StepperProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const StepperProvider: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
     const [currentStep, setCurrentStep] = useState(0);
     const [stepData, setStepData] = useState<Record<number, any>>({});
 
@@ -35,8 +37,9 @@ export const StepperProvider: React.FC<{ children: React.ReactNode }> = ({ child
 export const useStepperContext = () => {
     const context = useContext(StepperContext);
     if (context === undefined) {
-        throw new Error('useStepperContext must be used within a StepperProvider');
+        throw new Error(
+            'useStepperContext must be used within a StepperProvider'
+        );
     }
     return context;
 };
-

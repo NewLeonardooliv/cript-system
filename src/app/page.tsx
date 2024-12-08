@@ -10,40 +10,45 @@ import Stepper from '@/components/stepper';
 import { StepPreparation } from './_components/step-prepare';
 
 const Home: React.FC = () => {
-  const [stepData, setStepData] = useState({});
-  const steps = [
-    {
-      title: 'Geração de Chaves',
-      content: <StepGenerateKeys />
-    },
-    {
-      title: 'Preparação',
-      content: <StepPreparation  />
-    },
-    {
-      title: 'Assinatura',
-      content: <StepSignature stepData={stepData} setStepData={setStepData} />
-    },
-    {
-      title: 'Proteção',
-      content: <StepProtection stepData={stepData} setStepData={setStepData} />
-    },
-    {
-      title: 'Envio',
-      content: <StepSend stepData={stepData} setStepData={setStepData} />
-    },
-    {
-      title: 'Descriptografia',
-      content: <StepDecrypt stepData={stepData} setStepData={setStepData} />
-    },
-  ];
+    const [stepData, setStepData] = useState({});
+    const steps = [
+        {
+            title: 'Geração de Chaves',
+            content: <StepGenerateKeys />,
+        },
+        {
+            title: 'Preparação',
+            content: <StepPreparation />,
+        },
+        {
+            title: 'Assinatura',
+            content: (
+                <StepSignature stepData={stepData} setStepData={setStepData} />
+            ),
+        },
+        {
+            title: 'Proteção',
+            content: (
+                <StepProtection stepData={stepData} setStepData={setStepData} />
+            ),
+        },
+        {
+            title: 'Envio',
+            content: <StepSend stepData={stepData} setStepData={setStepData} />,
+        },
+        {
+            title: 'Descriptografia',
+            content: (
+                <StepDecrypt stepData={stepData} setStepData={setStepData} />
+            ),
+        },
+    ];
 
-  return (
-    <div className="mx-28 min-h-screen flex">
-      <Stepper steps={steps} />
-    </div>
-  );
+    return (
+        <div className="sm:mx-8 my-8 sm:my-0 md:mx-16 lg:mx-28 w-full min-h-fit flex">
+            <Stepper steps={steps} hiddenSteps={true} />
+        </div>
+    );
 };
 
 export default Home;
-
