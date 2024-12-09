@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { FileText, Info } from 'lucide-react';
+import { FileText, Info, Key } from 'lucide-react';
 import { Player } from '@lottiefiles/react-lottie-player';
 
 interface FileInfo {
@@ -105,7 +105,7 @@ export function StepPreparation({
                     Preparação do Ambiente
                 </h2>
                 <p className="text-gray-600 mb-8">
-                    Importe a chave pública e selecione o arquivo para envio
+                    Importe a chave pública e selecione o arquivo para envio seguro
                 </p>
             </motion.div>
 
@@ -132,7 +132,7 @@ export function StepPreparation({
                                         />
                                         {publicKey &&
                                             typeof publicKeyIsValid ===
-                                                'boolean' && (
+                                            'boolean' && (
                                                 <>
                                                     {publicKeyIsValid ? (
                                                         <span className="text-sm text-green-600">
@@ -224,6 +224,56 @@ export function StepPreparation({
                         </CardContent>
                     </Card>
                 </motion.div>
+            </div>
+
+            <div className="mt-8 p-6 bg-gray-50 rounded-lg border">
+                <h3 className="text-lg font-semibold mb-4">Como funciona o processo de envio seguro?</h3>
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div className="bg-white p-4 rounded-lg border">
+                        <div className="flex items-center gap-2 mb-3">
+                            <Key className="w-5 h-5 text-blue-600" />
+                            <h4 className="font-medium">Chave Pública</h4>
+                        </div>
+                        <div className="space-y-2 text-sm text-gray-600">
+                            <p>✓ Importada do professor</p>
+                            <p>✓ Garante envio seguro</p>
+                            <p>✓ Validação automática</p>
+                            <p>✗ Não pode ser usada para descriptografar</p>
+                        </div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg border">
+                        <div className="flex items-center gap-2 mb-3">
+                            <FileText className="w-5 h-5 text-green-600" />
+                            <h4 className="font-medium">Arquivo</h4>
+                        </div>
+                        <div className="space-y-2 text-sm text-gray-600">
+                            <p>✓ Visualização prévia</p>
+                            <p>✓ Verificação de integridade</p>
+                            <p>✓ Hash SHA-256</p>
+                            <p>✓ Tamanho do arquivo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="p-4 bg-white rounded-lg border border-blue-100">
+                <h4 className="text-sm font-medium text-blue-700 mb-2">Informações Importantes</h4>
+                <ul className="text-xs text-gray-600 space-y-1 list-disc list-inside">
+                    <li>A chave pública do professor é necessária para garantir o envio seguro</li>
+                    <li>O hash do arquivo serve como prova de integridade</li>
+                    <li>Arquivos de texto podem ser visualizados antes do envio</li>
+                    <li>O sistema suporta diversos formatos de arquivo</li>
+                </ul>
+            </div>
+
+            <div className="p-4 bg-white rounded-lg border border-amber-100">
+                <h4 className="text-sm font-medium text-amber-700 mb-2">Dicas de Segurança</h4>
+                <ul className="text-xs text-gray-600 space-y-1 list-disc list-inside">
+                    <li>Certifique-se de usar a chave pública correta do professor</li>
+                    <li>Verifique o conteúdo do arquivo antes do envio</li>
+                    <li>Guarde o hash do arquivo para verificação posterior</li>
+                    <li>Em caso de erro, você pode reiniciar o processo a qualquer momento</li>
+                </ul>
             </div>
         </div>
     );
