@@ -17,7 +17,7 @@ const Home: React.FC = () => {
     const steps = [
         {
             title: 'Geração de Chaves',
-            content: <StepGenerateKeys />,
+            content: <StepGenerateKeys setStepReady={() => { }} />,
         },
         {
             title: 'Preparação',

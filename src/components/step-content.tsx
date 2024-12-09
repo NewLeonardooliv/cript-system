@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useStepperContext } from '@/contexts/step-context';
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/button';
 import { ChevronRight } from 'lucide-react';
@@ -16,6 +16,8 @@ type StepContentProps = {
 };
 
 const StepContent: React.FC<StepContentProps> = ({ steps, hidden = false }) => {
+    const [stepReady, setStepReady] = useState(false);
+
     const { currentStep, stepData, setCurrentStep, setStepData } =
         useStepperContext();
 
@@ -52,6 +54,8 @@ const StepContent: React.FC<StepContentProps> = ({ steps, hidden = false }) => {
                             stepData,
                             setStepData: (data: any) =>
                                 setStepData(currentStep, data),
+                            stepReady,
+                            setStepReady,
                         }
                     )}
                 </motion.div>
@@ -62,7 +66,7 @@ const StepContent: React.FC<StepContentProps> = ({ steps, hidden = false }) => {
                 </Button>
                 <Button
                     onClick={handleNext}
-                    disabled={currentStep === steps.length - 1}
+                    disabled={(currentStep === steps.length - 1) || !stepReady}
                 >
                     {currentStep === steps.length - 1 ? 'Terminar' : 'Próximo'}
                     <ChevronRight className="w-4 h-4" />
