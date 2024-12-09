@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FileSignature, Lightbulb } from 'lucide-react';
+import { FileSignature, Info } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useRef, useState } from 'react';
@@ -35,44 +35,47 @@ export const StepProtection: React.FC<{
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-center"
             >
-                <h2 className="text-2xl font-bold mb-4">Proteção da Chave Simétrica</h2>
+                <h2 className="text-center text-2xl font-bold mb-4">Proteção da Chave Simétrica</h2>
                 <p className="text-gray-600 mb-8">
-                    Gere as chaves necessárias para a comunicação segura
+                    A proteção de uma chave simétrica AES utilizando uma chave RSA combina o desempenho do AES com a segurança do RSA. Nesse esquema, o AES é usado para criptografar dados devido à sua eficiência, enquanto a chave simétrica gerada para o AES é protegida pela criptografia RSA. A chave pública RSA cifra a chave AES antes de transmissão ou armazenamento, garantindo que apenas o detentor da chave privada RSA possa descriptografá-la. Esse método, conhecido como criptografia híbrida, une a velocidade da criptografia simétrica à robustez da assimétrica, proporcionando alta segurança e eficiência.
                 </p>
             </motion.div>
             <div className="grid grid-cols-1 gap-8">
                 <Card>
-                    <CardContent className="p-6 bg-blue-100 rounded-lg">
+                    <CardContent className="p-6 bg-blue-100 rounded-lg shadow-inner">
                         <div className="flex flex-col justify-center gap-4">
                             <div className="flex items-center gap-2">
-                                <Lightbulb className="w-5 h-5 text-yellow-500" />
-                                <h3 className="font-semibold">
+                                <Info className="w-5 h-5 text-blue-600" />
+                                <h3 className="font-medium text-blue-800">
                                     Como funciona?
                                 </h3>
                             </div>
 
-                            <ul className="list-disc list-inside flex flex-col gap-2">
-                                <li>A chave AES é cifrada com a chve pública do professor</li>
-                                <li>Apenas o professor, com sua chave privada, porá descriptografar o conteúdo</li>
-                                <li>Este processo garante o compartilhamento seguro da chave</li>
+                            <ul className="list-disc list-inside space-y-1 text-sm text-blue-700">
+                                <li className=''>Criptografia Simétrica (AES): A chave AES é gerada e usada para criptografar os dados, garantindo alto desempenho no processamento.</li>
+                                <li className='space-y-1 text-sm text-blue-700'>Proteção da Chave AES: A chave AES é criptografada usando a chave pública RSA, protegendo-a contra acesso não autorizado.</li>
+                                <li className='space-y-1 text-sm text-blue-700'>Descriptografia Segura: O receptor usa sua chave privada RSA para descriptografar a chave AES e, com ela, decifrar os dados originalmente protegidos.</li>
                             </ul>
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className='rounded-none border-none shadow-none'>
-                    <CardContent className="border-l-4 border-blue-600 p-6">
+                <Card>
+                    <CardContent className="p-6 bg-blue-100 rounded-lg shadow-inner">
                         <div className="flex flex-col justify-center gap-4">
-                            <h3 className="font-semibold">
-                                Por que a chave simétrica?
-                            </h3>
+                            <div className="flex items-center gap-2">
+                                <Info className="w-5 h-5 text-blue-600" />
+                                <h3 className="font-medium text-blue-800">
+                                    Por que a chave simétrica?
+                                </h3>
+                            </div>
 
-                            <ul className="list-disc list-inside flex flex-col gap-2">
-                                <li>A chave AES é usada para cifrar o arquivo principal</li>
-                                <li>Ela precisa ser compartilhada com o professor de forma segura</li>
-                                <li>Aproteção é feita utilizando criptografia assimétrica RSA</li>
+                            <ul className="list-disc list-inside space-y-1 text-sm text-blue-700">
+                                <li className=''>Desempenho e Velocidade: Criptografia simétrica (como AES) é muito mais rápida que algoritmos assimétricos, tornando-a ideal para grandes volumes de dados.</li>
+                                <li className='space-y-1 text-sm text-blue-700'>Eficiência Computacional: Requer menos recursos computacionais, o que é vantajoso em dispositivos com capacidade limitada.</li>
+                                <li className='space-y-1 text-sm text-blue-700'>Simplicidade na Implementação: A utilização de uma única chave simplifica o processo de criptografia e descriptografia.</li>
+                                <li className='space-y-1 text-sm text-blue-700'>Segurança Robusta: Quando usada com chaves fortes e bem gerenciadas, a criptografia simétrica oferece proteção eficaz contra ataques.</li>
                             </ul>
                         </div>
                     </CardContent>
