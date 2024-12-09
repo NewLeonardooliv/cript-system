@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,21 +14,23 @@ interface FileInfo {
     content?: string;
 }
 
-export function StepPreparation() {
+export function StepPreparation({
+    setStepData,
+}: {
+    setStepData: React.Dispatch<
+        React.SetStateAction<{
+            file: File | null;
+            publicKey: File | null;
+        }>
+    >;
+}) {
     const [publicKey, setPublicKey] = useState<File | null>(null);
-    const [, setSelectedFile] = useState<File | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
-
-    const calculateSHA256 = async (file: File): Promise<string> => {
-        const buffer = await file.arrayBuffer();
-        const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray
-            .map((b) => b.toString(16).padStart(2, '0'))
-            .join('');
-        return hashHex;
-    };
+    const [publicKeyIsValid, setPublicKeyIsValid] = useState<boolean | null>(
+        null
+    );
 
     const handleFileSelect = async (
         event: React.ChangeEvent<HTMLInputElement>,
@@ -37,31 +39,10 @@ export function StepPreparation() {
         const file = event.target.files?.[0];
         if (!file) return;
 
-        setIsProcessing(true);
-
-        try {
-            if (type === 'key') {
-                setPublicKey(file);
-            } else {
-                setSelectedFile(file);
-                const hash = await calculateSHA256(file);
-
-                let content: string | undefined;
-                if (file.type === 'text/plain') {
-                    content = await file.text();
-                }
-
-                setFileInfo({
-                    name: file.name,
-                    size: file.size,
-                    hash,
-                    content,
-                });
-            }
-        } catch (error) {
-            console.error('Error processing file:', error);
-        } finally {
-            setIsProcessing(false);
+        if (type === 'key') {
+            setPublicKey(file);
+        } else {
+            setSelectedFile(file);
         }
     };
 
@@ -70,6 +51,48 @@ export function StepPreparation() {
         if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
         return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
     };
+
+    async function validateData(formData: FormData) {
+        const response = await fetch('/api/prepare', {
+            method: 'POST',
+            body: formData,
+        });
+
+        setIsProcessing(false);
+        if (!response.ok) {
+            setPublicKeyIsValid(false);
+            return;
+        }
+
+        const data = (await response.json()) as {
+            publicKey: string;
+            file: {
+                name: string;
+                type: string;
+                size: number;
+                content: string;
+            };
+            hash: string;
+        };
+        setPublicKeyIsValid(true);
+        setFileInfo({
+            hash: data.hash,
+            ...data.file,
+        });
+        setStepData({ file: selectedFile, publicKey: publicKey });
+    }
+
+    useEffect(() => {
+        if (selectedFile && publicKey) {
+            setIsProcessing(true);
+            const formData = new FormData();
+
+            formData.append('publicKey', publicKey);
+            formData.append('file', selectedFile);
+
+            validateData(formData);
+        }
+    }, [selectedFile, publicKey]);
 
     return (
         <div className="space-y-8">
@@ -107,11 +130,21 @@ export function StepPreparation() {
                                                 handleFileSelect(e, 'key')
                                             }
                                         />
-                                        {publicKey && (
-                                            <span className="text-sm text-green-600">
-                                                ✓ {publicKey.name}
-                                            </span>
-                                        )}
+                                        {publicKey &&
+                                            typeof publicKeyIsValid ===
+                                                'boolean' && (
+                                                <>
+                                                    {publicKeyIsValid ? (
+                                                        <span className="text-sm text-green-600">
+                                                            ✓ {publicKey.name}
+                                                        </span>
+                                                    ) : (
+                                                        <span className="text-sm text-red-600">
+                                                            ✓ {publicKey.name}
+                                                        </span>
+                                                    )}
+                                                </>
+                                            )}
                                     </div>
                                 </label>
 
