@@ -94,8 +94,8 @@ export const StepSignature: React.FC<{
                         {signedData && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                className="mt-4 p-3 bg-gray-50 rounded-md"
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="mt-4 p-3 bg-gray-50 rounded-md"
                             >
                                 <p className="text-sm text-gray-600">
                                     Arquivo assinado com sucesso!
