@@ -73,12 +73,14 @@ export const StepSignature: React.FC<{
                         <div className="flex justify-center mb-4">
                             <Player
                                 ref={signAnimationRef}
-                                src="https://lottie.host/640cc0b4-188a-4b90-90ec-e169f6ce4341/frYqKpBWsc.json"
+                                src="https://lottie.host/580721b1-8cd6-445a-ab26-3b459c6e1ab1/KTkXURlQ5A.json"
                                 style={{
                                     height: '150px',
                                     width: '150px',
                                     display: isSigningFile ? 'block' : 'none',
                                 }}
+                                loop
+                                autoplay={false}
                             />
                         </div>
 
@@ -94,8 +96,8 @@ export const StepSignature: React.FC<{
                         {signedData && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-4 p-3 bg-gray-50 rounded-md"
+                                animate={{ opacity: 1, height: 'auto' }}
+                                className="mt-4 p-3 bg-gray-50 rounded-md"
                             >
                                 <p className="text-sm text-gray-600">
                                     Arquivo assinado com sucesso!
@@ -118,7 +120,7 @@ export const StepSignature: React.FC<{
                         <div className="flex justify-center mb-4">
                             <Player
                                 ref={encryptAnimationRef}
-                                src="https://lottie.host/640cc0b4-188a-4b90-90ec-e169f6ce4341/frYqKpBWsc.json"
+                                src="https://lottie.host/a6648d1e-4537-400c-b92c-521387a159bf/fuWly1naAG.json"
                                 style={{
                                     height: '150px',
                                     width: '150px',
@@ -126,6 +128,8 @@ export const StepSignature: React.FC<{
                                         ? 'block'
                                         : 'none',
                                 }}
+                                loop
+                                autoplay={false}
                             />
                         </div>
 
