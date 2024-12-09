@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/tooltip';
 import { Lock, Key, Shield, Eye, EyeOff, CircleHelp } from 'lucide-react';
 
-export function StepGenerateKeys() {
+export function StepGenerateKeys({ setStepReady }: { setStepReady: (value: boolean) => void }) {
     const [rsaKeys, setRsaKeys] = useState<{
         publicKey: string;
         privateKey: string;
@@ -56,6 +56,8 @@ export function StepGenerateKeys() {
 
         setIsGeneratingRSA(false);
         rsaAnimationRef.current?.stop();
+
+        setStepReady(true) // AQUI DESBLOQUEIA O BOTAO
     };
 
     const generateAESKey = async () => {
