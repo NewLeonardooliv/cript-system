@@ -32,7 +32,7 @@ const Home: React.FC = () => {
         {
             title: 'Proteção',
             content: (
-                <StepProtection stepData={stepData} setStepData={setStepData} />
+                <StepProtection stepData={stepData} setStepData={setStepData} setStepReady={() => { }} />
             ),
         },
         {

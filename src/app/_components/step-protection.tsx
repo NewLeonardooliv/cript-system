@@ -7,14 +7,13 @@ import { Button } from '@/components/ui/button';
 import { useRef, useState } from 'react';
 import { Player } from '@lottiefiles/react-lottie-player';
 
-export const StepProtection: React.FC<{
-    stepData: any;
-    setStepData: (data: any) => void;
-}> = ({ stepData, setStepData }) => {
+export function StepProtection({
+    stepData,
+    setStepData,
+    setStepReady
+}: { stepData: any, setStepData: (data: any) => void, setStepReady: (value: boolean) => void }) {
     const [isProtectingFile, setIsProtectingKey] = useState(false);
-    const keyAnimationRef = useRef<Player>(null);
     const protectingAnimationRef = useRef<Player>(null);
-    const cryptAnimationRef = useRef<Player>(null);
     const [protectedData, setProtectedData] = useState<string | null>(null);
     const [actionText, setActionText] = useState<string>('Proteger a chave');
 
@@ -36,7 +35,7 @@ export const StepProtection: React.FC<{
 
         setActionText('Chave protegida');
 
-        protectingAnimationRef.current?.play();
+        setStepReady(true);
     };
 
     return (
