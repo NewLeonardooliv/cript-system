@@ -1,23 +1,28 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { FileSignature, Lock, ArrowRight } from 'lucide-react';
 
-export const StepSignature: React.FC<{
-    stepData: any;
-    setStepData: (data: any) => void;
-}> = ({ stepData, setStepData }) => {
+export function StepSignature({
+    stepData,
+    setStepData,
+    setStepReady
+}: { stepData: any, setStepData: (data: any) => void, setStepReady: (value: boolean) => void }) {
     const [isSigningFile, setIsSigningFile] = useState(false);
     const [isEncryptingFile, setIsEncryptingFile] = useState(false);
     const [signedData, setSignedData] = useState<string | null>(null);
     const [encryptedData, setEncryptedData] = useState<string | null>(null);
     const signAnimationRef = useRef<Player>(null);
     const encryptAnimationRef = useRef<Player>(null);
+    const [signActionText, setSignActionText] = useState<string>('Assinar Arquivo');
+    const [encryptActionText, setEncryptActionText] = useState<string>('Cifrar Arquivo');
+
 
     const signFile = async () => {
         setIsSigningFile(true);
+        setSignActionText("Assinando...");
         signAnimationRef.current?.play();
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -26,12 +31,13 @@ export const StepSignature: React.FC<{
         setSignedData(simulatedSignature);
         setStepData({ ...stepData, signature: simulatedSignature });
 
+        setSignActionText("Arquivo assinado");
         setIsSigningFile(false);
-        signAnimationRef.current?.stop();
     };
 
     const encryptFile = async () => {
         setIsEncryptingFile(true);
+        setEncryptActionText('Cifrando...');
         encryptAnimationRef.current?.play();
 
         await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -41,8 +47,16 @@ export const StepSignature: React.FC<{
         setStepData({ ...stepData, encryptedData: simulatedEncryption });
 
         setIsEncryptingFile(false);
-        encryptAnimationRef.current?.stop();
+        setEncryptActionText('Arquivo cifrado');
     };
+
+    useEffect(() => {
+        if (signedData && encryptedData) {
+            setStepReady(true);
+        } else {
+            setStepReady(false);
+        }
+    }, [signedData, encryptedData]);
 
     return (
         <div className="space-y-8">
@@ -60,8 +74,8 @@ export const StepSignature: React.FC<{
                 </p>
             </motion.div>
 
-            <div className="grid grid-cols-1 gap-8">
-                <Card>
+            <div className="flex gap-6">
+                <Card className='w-full '>
                     <CardContent className="p-6">
                         <div className="flex items-center gap-2 mb-4">
                             <FileSignature className="w-5 h-5 text-blue-600" />
@@ -77,10 +91,9 @@ export const StepSignature: React.FC<{
                                 style={{
                                     height: '150px',
                                     width: '150px',
-                                    display: isSigningFile ? 'block' : 'none',
                                 }}
-                                loop
-                                autoplay={false}
+                                keepLastFrame={true}
+                                loop={false}
                             />
                         </div>
 
@@ -90,25 +103,12 @@ export const StepSignature: React.FC<{
                             disabled={isSigningFile || signedData !== null}
                         >
                             <FileSignature className="w-4 h-4" />
-                            {isSigningFile ? 'Assinando...' : 'Assinar Arquivo'}
+                            {signActionText}
                         </Button>
-
-                        {signedData && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                className="mt-4 p-3 bg-gray-50 rounded-md"
-                            >
-                                <p className="text-sm text-gray-600">
-                                    Arquivo assinado com sucesso!
-                                    <ArrowRight className="inline w-4 h-4 ml-2" />
-                                </p>
-                            </motion.div>
-                        )}
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card className='w-full '>
                     <CardContent className="p-6">
                         <div className="flex items-center gap-2 mb-4">
                             <Lock className="w-5 h-5 text-green-600" />
@@ -120,16 +120,13 @@ export const StepSignature: React.FC<{
                         <div className="flex justify-center mb-4">
                             <Player
                                 ref={encryptAnimationRef}
-                                src="https://lottie.host/a6648d1e-4537-400c-b92c-521387a159bf/fuWly1naAG.json"
+                                src="https://lottie.host/14aa0053-d46a-46cf-a87e-4cb5b74f8cea/B0O6PtxSwi.json"
                                 style={{
                                     height: '150px',
                                     width: '150px',
-                                    display: isEncryptingFile
-                                        ? 'block'
-                                        : 'none',
                                 }}
-                                loop
-                                autoplay={false}
+                                keepLastFrame={true}
+                                loop={false}
                             />
                         </div>
 
@@ -143,113 +140,98 @@ export const StepSignature: React.FC<{
                             }
                         >
                             <Lock className="w-4 h-4" />
-                            {isEncryptingFile
-                                ? 'Cifrando...'
-                                : 'Cifrar Arquivo'}
+                            {encryptActionText}
                         </Button>
-
-                        {encryptedData && (
-                            <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                className="mt-4 p-3 bg-gray-50 rounded-md"
-                            >
-                                <p className="text-sm text-gray-600">
-                                    Arquivo cifrado com sucesso!
-                                    <ArrowRight className="inline w-4 h-4 ml-2" />
-                                </p>
-                            </motion.div>
-                        )}
-                    </CardContent>
-                </Card>
-
-                <Card>
-                    <CardContent className="p-6">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="space-y-6"
-                        >
-                            <div className="space-y-4">
-                                <h3 className="text-lg font-semibold text-gray-900">
-                                    Por que este passo é importante?
-                                </h3>
-
-                                <div className="space-y-6">
-                                    <div className="bg-blue-50 p-4 rounded-lg">
-                                        <h4 className="font-medium text-blue-800 flex items-center gap-2 mb-2">
-                                            <FileSignature className="w-5 h-5" />
-                                            Assinatura Digital
-                                        </h4>
-                                        <ul className="text-sm text-blue-700 space-y-2">
-                                            <li className="flex items-start gap-2">
-                                                <span className="font-semibold min-w-24">
-                                                    Autenticidade:
-                                                </span>
-                                                <span>
-                                                    Comprova que você é o
-                                                    verdadeiro autor do
-                                                    documento
-                                                </span>
-                                            </li>
-                                            <li className="flex items-start gap-2">
-                                                <span className="font-semibold min-w-24">
-                                                    Integridade:
-                                                </span>
-                                                <span>
-                                                    Permite detectar qualquer
-                                                    alteração no documento após
-                                                    a assinatura
-                                                </span>
-                                            </li>
-                                            <li className="flex items-start gap-2">
-                                                <span className="font-semibold min-w-24">
-                                                    Não-repúdio:
-                                                </span>
-                                                <span>
-                                                    Impede que você negue
-                                                    posteriormente ter assinado
-                                                    o documento
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </div>
-
-                                    <div className="bg-green-50 p-4 rounded-lg">
-                                        <h4 className="font-medium text-green-800 flex items-center gap-2 mb-2">
-                                            <Lock className="w-5 h-5" />
-                                            Cifragem
-                                        </h4>
-                                        <ul className="text-sm text-green-700 space-y-2">
-                                            <li className="flex items-start gap-2">
-                                                <span className="font-semibold min-w-24">
-                                                    Confidencialidade:
-                                                </span>
-                                                <span>
-                                                    Garante que apenas o
-                                                    destinatário autorizado
-                                                    possa ler o conteúdo
-                                                </span>
-                                            </li>
-                                            <li className="flex items-start gap-2">
-                                                <span className="font-semibold min-w-24">
-                                                    Privacidade:
-                                                </span>
-                                                <span>
-                                                    Protege o documento durante
-                                                    toda a transmissão,
-                                                    mantendo-o ilegível para
-                                                    terceiros
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
                     </CardContent>
                 </Card>
             </div>
+
+            <Card>
+                <CardContent className="p-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="space-y-6"
+                    >
+                        <div className="space-y-4">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                                Por que este passo é importante?
+                            </h3>
+
+                            <div className="space-y-6">
+                                <div className="bg-blue-50 p-4 rounded-lg">
+                                    <h4 className="font-medium text-blue-800 flex items-center gap-2 mb-2">
+                                        <FileSignature className="w-5 h-5" />
+                                        Assinatura Digital
+                                    </h4>
+                                    <ul className="text-sm text-blue-700 space-y-2">
+                                        <li className="flex items-start gap-2">
+                                            <span className="font-semibold min-w-24">
+                                                Autenticidade:
+                                            </span>
+                                            <span>
+                                                Comprova que você é o
+                                                verdadeiro autor do
+                                                documento
+                                            </span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <span className="font-semibold min-w-24">
+                                                Integridade:
+                                            </span>
+                                            <span>
+                                                Permite detectar qualquer
+                                                alteração no documento após
+                                                a assinatura
+                                            </span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <span className="font-semibold min-w-24">
+                                                Não-repúdio:
+                                            </span>
+                                            <span>
+                                                Impede que você negue
+                                                posteriormente ter assinado
+                                                o documento
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className="bg-green-50 p-4 rounded-lg">
+                                    <h4 className="font-medium text-green-800 flex items-center gap-2 mb-2">
+                                        <Lock className="w-5 h-5" />
+                                        Cifragem
+                                    </h4>
+                                    <ul className="text-sm text-green-700 space-y-2">
+                                        <li className="flex items-start gap-2">
+                                            <span className="font-semibold min-w-24">
+                                                Confidencialidade:
+                                            </span>
+                                            <span>
+                                                Garante que apenas o
+                                                destinatário autorizado
+                                                possa ler o conteúdo
+                                            </span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <span className="font-semibold min-w-24">
+                                                Privacidade:
+                                            </span>
+                                            <span>
+                                                Protege o documento durante
+                                                toda a transmissão,
+                                                mantendo-o ilegível para
+                                                terceiros
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                </CardContent>
+            </Card>
         </div>
     );
 };
