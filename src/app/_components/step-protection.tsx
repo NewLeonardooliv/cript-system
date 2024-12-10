@@ -34,6 +34,8 @@ export function StepProtection({
         setIsProtectingKey(false);
 
         setActionText('Chave protegida');
+
+        setStepReady(true);
     };
 
     useEffect(() => {
