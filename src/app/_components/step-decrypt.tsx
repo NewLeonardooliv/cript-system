@@ -1,25 +1,46 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Key } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import FileUploader from '@/components/file-uploader';
 
-export function StepDecrypt() {
-    const [privateKey, setPrivateKey] = useState('');
+export function StepDecrypt({
+    stepData,
+    setStepData,
+    setStepReady
+}: { stepData: any, setStepData: (data: any) => void, setStepReady: (value: boolean) => void }) {
+    const [privateKey, setPrivateKey] = useState<File | null>(null);
     const [isDecrypting, setIsDecrypting] = useState(false);
+    const [actionText, setActionText] = useState<string>('Descriptografar Arquivo');
 
-    const handleDecrypt = () => {
-        if (!privateKey.trim()) {
-            toast.error('Por favor, insira a chave privada');
-            return;
-        }
+
+    const handleDecrypt = async () => {
+        setActionText('Descriptografando...');
 
         setIsDecrypting(true);
-        setTimeout(() => {
-            setIsDecrypting(false);
-            toast.success('Arquivo descriptografado com sucesso!');
-        }, 2000);
+
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        setIsDecrypting(false);
+
+
+        setActionText('Arquivo descriptografado');
     };
+
+    const handleFileSelect = async (file: File) => {
+        if (!file) return;
+
+        setPrivateKey(file);
+    };
+
+    useEffect(() => {
+        if (privateKey) {
+            setStepReady(true);
+        } else {
+            setStepReady(false);
+        }
+    }, [privateKey]);
 
     return (
         <motion.div
@@ -62,22 +83,19 @@ export function StepDecrypt() {
                         Chave Privada do Professor:
                     </label>
                     <div className="relative">
-                        <textarea
-                            className="w-full h-24 p-3 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            placeholder="Cole aqui sua chave privada RSA..."
-                            value={privateKey}
-                            onChange={(e) => setPrivateKey(e.target.value)}
-                        />
-                        <Key className="absolute right-3 top-3 text-gray-400 w-5 h-5" />
+                        <FileUploader
+                            label='Importe a chave privada (RSA) do professor'
+                            filesTypeAccepted={['pem', 'key', 'pub']}
+                            handleFileSelect={(file) => handleFileSelect(file)} />
                     </div>
                 </div>
 
                 <Button
                     className="w-full mt-6"
                     onClick={handleDecrypt}
-                    disabled={isDecrypting}
+                    disabled={!privateKey}
                 >
-                    {isDecrypting ? 'Descriptografando...' : 'Iniciar Descriptografia'}
+                    {actionText}
                 </Button>
             </div>
         </motion.div>
