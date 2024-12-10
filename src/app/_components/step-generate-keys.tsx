@@ -1,7 +1,7 @@
 'use client';
 
 import JSZip from 'jszip';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Player } from '@lottiefiles/react-lottie-player';
 import { Button } from '@/components/ui/button';
@@ -104,8 +104,6 @@ export function StepGenerateKeys({ setStepReady }: { setStepReady: (value: boole
 
         setIsGeneratingRSA(false);
         rsaAnimationRef.current?.stop();
-
-        setStepReady(true) // AQUI DESBLOQUEIA O BOTAO
     };
 
     const generateAESKey = async () => {
@@ -202,6 +200,14 @@ export function StepGenerateKeys({ setStepReady }: { setStepReady: (value: boole
         document.body.removeChild(a);
     };
 
+    useEffect(() => {
+        if (rsaKeys && aesKey) {
+            setStepReady(true);
+        } else {
+            setStepReady(false);
+        }
+    }, [rsaKeys, aesKey]);
+
     return (
         <div className="w-full">
             <motion.div
@@ -215,7 +221,7 @@ export function StepGenerateKeys({ setStepReady }: { setStepReady: (value: boole
                 </p>
             </motion.div>
 
-            <div className="space-y-10">
+            <div className="space-y-6">
                 <div className="flex justify-end">
                     <TooltipProvider>
                         <Tooltip>
@@ -505,10 +511,10 @@ export function StepGenerateKeys({ setStepReady }: { setStepReady: (value: boole
                             <Button
                                 className="w-full mb-4"
                                 onClick={generateAESKey}
-                                disabled={isGeneratingAES}
+                                disabled={aesKey !== null}
                             >
                                 <Key className="w-4 h-4 mr-2" />
-                                {rsaActionText}
+                                {aesActionText}
                             </Button>
 
                             <div className="flex items-center justify-center mb-4">
