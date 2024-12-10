@@ -11,19 +11,19 @@ export function StepDecrypt({
     setStepReady
 }: { stepData: any, setStepData: (data: any) => void, setStepReady: (value: boolean) => void }) {
     const [privateKey, setPrivateKey] = useState<File | null>(null);
-    const [isDecrypting, setIsDecrypting] = useState(false);
     const [actionText, setActionText] = useState<string>('Descriptografar Arquivo');
+    const [data, setData] = useState<string | null>(null);
+
 
 
     const handleDecrypt = async () => {
         setActionText('Descriptografando...');
 
-        setIsDecrypting(true);
-
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        setIsDecrypting(false);
-
+        const simulatedData = btoa('Chave AES protegida');
+        setData(simulatedData);
+        setStepData({ ...stepData, signature: simulatedData });
 
         setActionText('Arquivo descriptografado');
     };

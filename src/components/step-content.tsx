@@ -63,13 +63,14 @@ const StepContent: React.FC<StepContentProps> = ({ steps, hidden = false }) => {
                 <Button onClick={handlePrevious} className={currentStep === 0 ? 'hidden' : ''}>
                     Anterior
                 </Button>
-                <Button
-                    onClick={handleNext}
-                    disabled={(currentStep === steps.length - 1) || !stepReady}
-                >
-                    {currentStep === steps.length - 1 ? 'Terminar' : 'Próximo'}
-                    <ChevronRight className="w-4 h-4" />
-                </Button>
+                {currentStep !== steps.length - 1 &&
+                    <Button
+                        onClick={handleNext}
+                        disabled={(currentStep === steps.length - 1) || !stepReady}
+                    >
+                        {currentStep === steps.length - 1 ? 'Terminar' : 'Próximo'}
+                        <ChevronRight className="w-4 h-4" />
+                    </Button>}
             </div>
         </div>
     );
