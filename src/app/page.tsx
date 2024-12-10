@@ -37,12 +37,12 @@ const Home: React.FC = () => {
         },
         {
             title: 'Envio',
-            content: <StepSend />,
+            content: <StepSend stepData={stepData} setStepData={setStepData} setStepReady={() => { }} />,
         },
         {
             title: 'Descriptografia',
             content: (
-                <StepDecrypt />
+                <StepDecrypt stepData={stepData} setStepData={setStepData} setStepReady={() => { }} />
             ),
         },
     ];

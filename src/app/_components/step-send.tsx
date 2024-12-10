@@ -7,23 +7,44 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { Send, User, Package, Shield, Info } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-export function StepSend() {
+export function StepSend({
+    stepData,
+    setStepData,
+    setStepReady
+}: { stepData: any, setStepData: (data: any) => void, setStepReady: (value: boolean) => void }) {
     const [isSending, setIsSending] = useState(false);
     const [isDelivered, setIsDelivered] = useState(false);
+    const [sendData, setSendData] = useState<string | null>(null);
+    const [actionText, setActionText] = useState<string>('Enviar pacote');
 
     const animationDuration = 2;
 
     const handleSendPackage = () => {
+        setActionText('Enviando...');
+
+        const simulatedSend = btoa('Chave AES protegida');
+        setSendData(simulatedSend);
+        setStepData({ ...stepData, signature: simulatedSend });
+
         setIsSending(true);
         setTimeout(() => {
             setIsSending(false);
             setIsDelivered(true);
-            toast.success('Pacote recebido com sucesso!');
         }, animationDuration * 1000);
+
+        setActionText('Pacote enviado');
     };
+
+    useEffect(() => {
+        if (sendData) {
+            setStepReady(true);
+        } else {
+            setStepReady(false);
+        }
+    }, [sendData]);
 
     return (
         <motion.div
@@ -60,7 +81,7 @@ export function StepSend() {
                 </ul>
 
                 <div className="relative h-40 my-8">
-                    <div className="absolute top-1/2 left-12 right-12 h-1 bg-gray-200 transform -translate-y-1/2" />
+                    <div className="absolute top-1/2 left-10 right-12 h-1 bg-gray-200 transform -translate-y-1/2" />
 
                     {isSending && (
                         <motion.div
@@ -114,23 +135,14 @@ export function StepSend() {
                     </div>
                 </div>
 
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                className="w-full"
-                                onClick={handleSendPackage}
-                                disabled={isSending || isDelivered}
-                            >
-                                <Send className="w-4 h-4 mr-2" />
-                                {isSending ? 'Enviando...' : isDelivered ? 'Enviado!' : 'Enviar Pacote'}
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Enviar pacote criptografado</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
+                <Button
+                    className="w-full"
+                    onClick={handleSendPackage}
+                    disabled={isSending || isDelivered}
+                >
+                    <Send className="w-4 h-4 mr-2" />
+                    {actionText}
+                </Button>
             </div>
         </motion.div>
     );
