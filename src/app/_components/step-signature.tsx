@@ -4,6 +4,7 @@ import { Player } from '@lottiefiles/react-lottie-player';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { FileSignature, Lock, ArrowRight } from 'lucide-react';
+import FileUploader from '@/components/file-uploader';
 
 export function StepSignature({
     stepData,
@@ -18,6 +19,9 @@ export function StepSignature({
     const encryptAnimationRef = useRef<Player>(null);
     const [signActionText, setSignActionText] = useState<string>('Assinar Arquivo');
     const [encryptActionText, setEncryptActionText] = useState<string>('Cifrar Arquivo');
+    const [privateKey, setPrivateKey] = useState<File | null>(null);
+    const [aesKey, setAesKey] = useState<File | null>(null);
+
 
 
     const signFile = async () => {
@@ -50,6 +54,16 @@ export function StepSignature({
         setEncryptActionText('Arquivo cifrado');
     };
 
+    const handleFileSelect = async (file: File, type: 'rsa' | 'aes') => {
+        if (!file) return;
+
+        if (type === 'rsa') {
+            setPrivateKey(file);
+        } else {
+            setAesKey(file);
+        }
+    };
+
     useEffect(() => {
         if (signedData && encryptedData) {
             setStepReady(true);
@@ -75,32 +89,38 @@ export function StepSignature({
             </motion.div>
 
             <div className="flex gap-6">
-                <Card className='w-full '>
+                <Card className='w-full relative'>
                     <CardContent className="p-6">
-                        <div className="flex items-center gap-2 mb-4">
+                        <div className="flex items-center gap-2 mb-6">
                             <FileSignature className="w-5 h-5 text-blue-600" />
                             <h3 className="font-semibold">
                                 Assinatura Digital
                             </h3>
                         </div>
 
-                        <div className="flex justify-center mb-4">
+                        <div className="absolute right-1 top-1">
                             <Player
                                 ref={signAnimationRef}
                                 src="https://lottie.host/580721b1-8cd6-445a-ab26-3b459c6e1ab1/KTkXURlQ5A.json"
                                 style={{
-                                    height: '150px',
-                                    width: '150px',
+                                    height: '60px',
+                                    width: '60px',
                                 }}
                                 keepLastFrame={true}
                                 loop={false}
                             />
                         </div>
 
+                        <FileUploader
+                            label='Importe a chave privada (RSA) do professor'
+                            filesTypeAccepted={['pem', 'key', 'pub']}
+                            className='rounded-none rounded-t-lg border-b-0'
+                            handleFileSelect={(file) => handleFileSelect(file, 'rsa')} />
+
                         <Button
-                            className="w-full"
+                            className="w-full rounded-none rounded-b-lg"
                             onClick={signFile}
-                            disabled={isSigningFile || signedData !== null}
+                            disabled={isSigningFile || signedData !== null || !privateKey}
                         >
                             <FileSignature className="w-4 h-4" />
                             {signActionText}
@@ -108,35 +128,43 @@ export function StepSignature({
                     </CardContent>
                 </Card>
 
-                <Card className='w-full '>
+                <Card className='w-full relative'>
                     <CardContent className="p-6">
-                        <div className="flex items-center gap-2 mb-4">
+                        <div className="flex items-center gap-2 mb-6">
                             <Lock className="w-5 h-5 text-green-600" />
                             <h3 className="font-semibold">
                                 Cifragem do Arquivo
                             </h3>
                         </div>
 
-                        <div className="flex justify-center mb-4">
+                        <div className="absolute right-2 top-2">
                             <Player
                                 ref={encryptAnimationRef}
                                 src="https://lottie.host/14aa0053-d46a-46cf-a87e-4cb5b74f8cea/B0O6PtxSwi.json"
                                 style={{
-                                    height: '150px',
-                                    width: '150px',
+                                    height: '50px',
+                                    width: '50px',
                                 }}
                                 keepLastFrame={true}
                                 loop={false}
                             />
                         </div>
 
+
+                        <FileUploader
+                            label='Importe a chave AES'
+                            className='rounded-none rounded-t-lg border-b-0'
+                            handleFileSelect={(file) => handleFileSelect(file, 'aes')} />
+
                         <Button
-                            className="w-full"
+                            className="w-full rounded-none rounded-b-lg"
                             onClick={encryptFile}
                             disabled={
                                 isEncryptingFile ||
                                 !signedData ||
-                                encryptedData !== null
+                                encryptedData !== null ||
+                                !privateKey &&
+                                !aesKey
                             }
                         >
                             <Lock className="w-4 h-4" />
