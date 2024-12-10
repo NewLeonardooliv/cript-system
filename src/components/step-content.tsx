@@ -35,9 +35,8 @@ const StepContent: React.FC<StepContentProps> = ({ steps, hidden = false }) => {
 
     return (
         <div
-            className={`md:bg-gray-50 rounded-lg md:p-6 md:shadow-inner w-full ${
-                hidden ? 'hidden' : ''
-            }`}
+            className={`md:bg-gray-50 rounded-lg md:p-6 md:shadow-inner w-full ${hidden ? 'hidden' : ''
+                }`}
         >
             <AnimatePresence mode="wait">
                 <motion.div
@@ -60,8 +59,8 @@ const StepContent: React.FC<StepContentProps> = ({ steps, hidden = false }) => {
                     )}
                 </motion.div>
             </AnimatePresence>
-            <div className="flex justify-between">
-                <Button onClick={handlePrevious} disabled={currentStep === 0}>
+            <div className={`w-full flex ${currentStep === 0 ? 'justify-end' : 'justify-between'}`}>
+                <Button onClick={handlePrevious} className={currentStep === 0 ? 'hidden' : ''}>
                     Anterior
                 </Button>
                 <Button

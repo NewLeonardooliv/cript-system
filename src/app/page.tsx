@@ -21,12 +21,12 @@ const Home: React.FC = () => {
         },
         {
             title: 'Preparação',
-            content: <StepPreparation setStepData={setStepData} />,
+            content: <StepPreparation setStepData={setStepData} setStepReady={() => { }} />,
         },
         {
             title: 'Assinatura',
             content: (
-                <StepSignature stepData={stepData} setStepData={setStepData} />
+                <StepSignature stepData={stepData} setStepData={setStepData} setStepReady={() => { }} />
             ),
         },
         {

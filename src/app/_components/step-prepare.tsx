@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { FileText, Info, Key } from 'lucide-react';
 import { Player } from '@lottiefiles/react-lottie-player';
+import FileUploader from '@/components/file-uploader';
 
 interface FileInfo {
     name: string;
@@ -16,27 +17,22 @@ interface FileInfo {
 
 export function StepPreparation({
     setStepData,
+    setStepReady,
 }: {
     setStepData: React.Dispatch<
         React.SetStateAction<{
             file: File | null;
             publicKey: File | null;
         }>
-    >;
+    >,
+    setStepReady: (value: boolean) => void
 }) {
     const [publicKey, setPublicKey] = useState<File | null>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [publicKeyIsValid, setPublicKeyIsValid] = useState<boolean | null>(
-        null
-    );
 
-    const handleFileSelect = async (
-        event: React.ChangeEvent<HTMLInputElement>,
-        type: 'key' | 'document'
-    ) => {
-        const file = event.target.files?.[0];
+    const handleFileSelect = async (file: File, type: 'key' | 'document') => {
         if (!file) return;
 
         if (type === 'key') {
@@ -44,6 +40,8 @@ export function StepPreparation({
         } else {
             setSelectedFile(file);
         }
+
+        if (publicKey && selectedFile) setIsProcessing(true);
     };
 
     const formatFileSize = (bytes: number): string => {
@@ -60,7 +58,6 @@ export function StepPreparation({
 
         setIsProcessing(false);
         if (!response.ok) {
-            setPublicKeyIsValid(false);
             return;
         }
 
@@ -74,7 +71,6 @@ export function StepPreparation({
             };
             hash: string;
         };
-        setPublicKeyIsValid(true);
         setFileInfo({
             hash: data.hash,
             ...data.file,
@@ -91,8 +87,13 @@ export function StepPreparation({
             formData.append('file', selectedFile);
 
             validateData(formData);
+
+            setStepReady(true);
+        } else {
+            setStepReady(false);
         }
     }, [selectedFile, publicKey]);
+
 
     return (
         <div className="space-y-8">
@@ -118,49 +119,16 @@ export function StepPreparation({
                     <Card>
                         <CardContent className="p-6">
                             <div className="space-y-4">
-                                <label className="block">
-                                    <span className="text-sm font-medium text-gray-700">
-                                        Importar Chave Pública do Professor:
-                                    </span>
-                                    <div className="mt-1 flex items-center gap-4">
-                                        <Input
-                                            type="file"
-                                            accept=".pem,.key,.pub"
-                                            onChange={(e) =>
-                                                handleFileSelect(e, 'key')
-                                            }
-                                        />
-                                        {publicKey &&
-                                            typeof publicKeyIsValid ===
-                                            'boolean' && (
-                                                <>
-                                                    {publicKeyIsValid ? (
-                                                        <span className="text-sm text-green-600">
-                                                            ✓ {publicKey.name}
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-sm text-red-600">
-                                                            ✓ {publicKey.name}
-                                                        </span>
-                                                    )}
-                                                </>
-                                            )}
-                                    </div>
-                                </label>
+                                <div className="flex gap-6">
+                                    <FileUploader
+                                        label='Importe a chave pública (RSA) do professor'
+                                        filesTypeAccepted={['pem', 'key', 'pub']}
+                                        handleFileSelect={(file) => handleFileSelect(file, 'key')} />
 
-                                <label className="block">
-                                    <span className="text-sm font-medium text-gray-700">
-                                        Selecionar Arquivo para Envio:
-                                    </span>
-                                    <div className="mt-1 flex items-center gap-4">
-                                        <Input
-                                            type="file"
-                                            onChange={(e) =>
-                                                handleFileSelect(e, 'document')
-                                            }
-                                        />
-                                    </div>
-                                </label>
+                                    <FileUploader
+                                        label='Importe o arquivo que deseje enviar'
+                                        handleFileSelect={(file) => handleFileSelect(file, 'document')} />
+                                </div>
 
                                 {isProcessing && (
                                     <div className="flex justify-center">
@@ -226,48 +194,29 @@ export function StepPreparation({
                 </motion.div>
             </div>
 
-            <div className="mt-8 p-6 bg-gray-50 rounded-lg border">
-                <h3 className="text-lg font-semibold mb-4">Como funciona o processo de envio seguro?</h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div className="bg-white p-4 rounded-lg border">
-                        <div className="flex items-center gap-2 mb-3">
-                            <Key className="w-5 h-5 text-blue-600" />
-                            <h4 className="font-medium">Chave Pública</h4>
-                        </div>
-                        <div className="space-y-2 text-sm text-gray-600">
-                            <p>✓ Importada do professor</p>
-                            <p>✓ Garante envio seguro</p>
-                            <p>✓ Validação automática</p>
-                            <p>✗ Não pode ser usada para descriptografar</p>
-                        </div>
-                    </div>
-                    <div className="bg-white p-4 rounded-lg border">
-                        <div className="flex items-center gap-2 mb-3">
-                            <FileText className="w-5 h-5 text-green-600" />
-                            <h4 className="font-medium">Arquivo</h4>
-                        </div>
-                        <div className="space-y-2 text-sm text-gray-600">
-                            <p>✓ Visualização prévia</p>
-                            <p>✓ Verificação de integridade</p>
-                            <p>✓ Hash SHA-256</p>
-                            <p>✓ Tamanho do arquivo</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Card className='w-full rounded-lg shadow-none'>
+                <CardContent className="p-4 bg-white border-blue-100 rounded-lg w-full">
+                    <div className="flex flex-col justify-center w-full">
+                        <h3 className="text-sm font-medium text-blue-700 mb-2">
+                            Como funciona o processo de envio seguro?
+                        </h3>
 
-            <div className="p-4 bg-white rounded-lg border border-blue-100">
-                <h4 className="text-sm font-medium text-blue-700 mb-2">Informações Importantes</h4>
-                <ul className="text-xs text-gray-600 space-y-1 list-disc list-inside">
-                    <li>A chave pública do professor é necessária para garantir o envio seguro</li>
-                    <li>O hash do arquivo serve como prova de integridade</li>
-                    <li>Arquivos de texto podem ser visualizados antes do envio</li>
-                    <li>O sistema suporta diversos formatos de arquivo</li>
-                </ul>
-            </div>
+                        <ul className="text-xs text-gray-600 space-y-1 list-disc list-inside">
+                            <li>Compartilhamento da Chave Pública:
+                                A chave pública do destinatário é compartilhada previamente, garantindo que a comunicação seja confiável e segura.</li>
+                            <li>Validação e Integração:
+                                Antes do envio, valida-se a integridade do arquivo usando hashes (como SHA-256) para verificar se ele não foi alterado durante a transferência.</li>
+                            <li>Envio do Arquivo:
+                                O arquivo e a chave pública são enviados utilizando um canal seguro, como HTTPS, ou por meio de mecanismos de transporte confiáveis para evitar interceptações.</li>
+                            <li>Recepção e Verificação:
+                                O destinatário realiza verificações automáticas para assegurar que o arquivo chegou intacto e que o remetente é legítimo, garantindo um envio seguro.</li>
+                        </ul>
+                    </div>
+                </CardContent>
+            </Card>
 
             <div className="p-4 bg-white rounded-lg border border-amber-100">
-                <h4 className="text-sm font-medium text-amber-700 mb-2">Dicas de Segurança</h4>
+                <h4 className="text-sm font-medium text-green-600 mb-2">Dicas de Segurança</h4>
                 <ul className="text-xs text-gray-600 space-y-1 list-disc list-inside">
                     <li>Certifique-se de usar a chave pública correta do professor</li>
                     <li>Verifique o conteúdo do arquivo antes do envio</li>
