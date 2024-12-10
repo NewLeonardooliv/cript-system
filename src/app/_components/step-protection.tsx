@@ -4,17 +4,16 @@ import { motion } from 'framer-motion';
 import { FileLock, FileSignature, Info, ShieldPlus } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Player } from '@lottiefiles/react-lottie-player';
 
-export const StepProtection: React.FC<{
-    stepData: any;
-    setStepData: (data: any) => void;
-}> = ({ stepData, setStepData }) => {
+export function StepProtection({
+    stepData,
+    setStepData,
+    setStepReady
+}: { stepData: any, setStepData: (data: any) => void, setStepReady: (value: boolean) => void }) {
     const [isProtectingFile, setIsProtectingKey] = useState(false);
-    const keyAnimationRef = useRef<Player>(null);
     const protectingAnimationRef = useRef<Player>(null);
-    const cryptAnimationRef = useRef<Player>(null);
     const [protectedData, setProtectedData] = useState<string | null>(null);
     const [actionText, setActionText] = useState<string>('Proteger a chave');
 
@@ -35,9 +34,15 @@ export const StepProtection: React.FC<{
         setIsProtectingKey(false);
 
         setActionText('Chave protegida');
-
-        protectingAnimationRef.current?.play();
     };
+
+    useEffect(() => {
+        if (protectedData) {
+            setStepReady(true);
+        } else {
+            setStepReady(false);
+        }
+    }, [protectedData]);
 
     return (
         <div className="space-y-10 w-full">
